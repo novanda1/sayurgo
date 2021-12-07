@@ -18,5 +18,5 @@
 go.work
 
 
-./tmp
-./sayurgo
+tmp/
+sayurgo
