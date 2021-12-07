@@ -10,15 +10,13 @@ import (
 )
 
 func Auth(c *fiber.Ctx) (string, error) {
-	// err, user := GetUserByPhone(c)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	token, err := SignToken(user)
+	err, user := GetUserByPhone(c)
+	if err != nil {
+		token, err := SignToken(user)
 
-	// 	return token, err
-	// }
+		return token, err
+	}
 
-	err, user := CreateUser(c)
 	token, err := SignToken(user)
 
 	return token, err
