@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v3"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/routes"
 
@@ -17,14 +19,18 @@ func setupRoutes(app *fiber.App) {
 
 	api := app.Group("/api")
 
-	api.Get("", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"success": true,
-			"message": "You are at the api endpoint 😉",
-		})
-	})
-
+	routes.AuthRoute(api.Group("/auth"))
+	// JWT Middleware
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("secret"),
+	}))
 	routes.ProductRoute(api.Group("/products"))
+	api.Get("", func(c *fiber.Ctx) error {
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		name := claims["name"].(string)
+		return c.SendString("Welcome " + name)
+	})
 }
 
 func main() {
