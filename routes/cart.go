@@ -8,5 +8,5 @@ import (
 func CartRoute(route fiber.Router) {
 	route.Get("/:id", controllers.GetCart)
 	route.Post("/", controllers.CreateCart)
-	route.Post("/:id", controllers.AddProductToCart)
+	route.Post("/add", controllers.AddProductToCart)
 }

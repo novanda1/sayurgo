@@ -8,7 +8,10 @@ import (
 )
 
 func CreateCart(c *fiber.Ctx) error {
-	cart, err := services.CreateCart(c)
+	body := &models.Cart{}
+	err := c.BodyParser(body)
+
+	cart, err := services.CreateCart(*body)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -66,7 +69,7 @@ func AddProductToCart(c *fiber.Ctx) error {
 		})
 	}
 
-	cart, msg := services.AddProductToCart(user, cartProduct)
+	cart, msg := services.AddProductToCart(c, *user.ID, cartProduct)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,

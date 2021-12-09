@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,30 +13,23 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func CreateCart(c *fiber.Ctx) (*models.Cart, error) {
+func CreateCart(cart models.Cart) (*models.Cart, error) {
 	cartCollection := config.MI.DB.Collection("carts")
-	data := new(models.Cart)
 
-	err := c.BodyParser(&data)
-	if err != nil {
-		return data, err
-	}
+	cart.ID = nil
+	cart.CreatedAt = time.Now()
+	cart.UpdatedAt = time.Now()
 
-	data.ID = nil
-	data.CreatedAt = time.Now()
-	data.UpdatedAt = time.Now()
-
-	result, err := cartCollection.InsertOne(c.Context(), data)
+	result, err := cartCollection.InsertOne(context.TODO(), cart)
 
 	if err != nil {
-		return data, err
+		return &cart, err
 	}
 
-	cart := &models.Cart{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
-	cartCollection.FindOne(c.Context(), query).Decode(cart)
+	cartCollection.FindOne(context.TODO(), query).Decode(cart)
 
-	return cart, err
+	return &cart, err
 }
 
 func GetCart(c *fiber.Ctx, paramId string) (*models.Cart, error) {
@@ -54,18 +48,41 @@ func GetCart(c *fiber.Ctx, paramId string) (*models.Cart, error) {
 	return cart, err
 }
 
-func AddProductToCart(user *models.User, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
+func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
 	cartCollection := config.MI.DB.Collection("carts")
-	query := bson.M{"userid": user.ID}
+	query := bson.M{"userid": userID}
 
-	update := bson.D{
-		{Key: "$push", Value: bson.M{"product": cartProduct}},
+	var update bson.D
+
+	if cart.Product != nil {
+		update = append(update, bson.E{"$push", bson.M{"product": cartProduct.ID}})
+	} else {
+		var cartProductArray [1]string
+		cartProductArray[0] = *cartProduct.ID
+		update = append(update, bson.E{"$set", bson.M{"product": cartProductArray}})
+
 	}
 
-	err := cartCollection.FindOneAndUpdate(context.TODO(), query, update).Decode(cart)
+	err := cartCollection.FindOne(context.TODO(), query).Decode(&cart)
 
 	if err != nil {
-		return cart, "failed to update"
+		if err.Error() == "mongo: no documents in result" {
+			cartOption := &models.Cart{}
+			cartOption.UserID = &userID
+
+			cart, err = CreateCart(*cartOption)
+
+			if err != nil {
+				return cart, "failed to create cart"
+			}
+		}
+	}
+
+	err = cartCollection.FindOneAndUpdate(context.Background(), query, update).Decode(cart)
+	fmt.Println(err, cart)
+
+	if err != nil {
+		return cart, "update failed"
 	}
 
 	return cart, "successfully"
