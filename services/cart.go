@@ -54,23 +54,20 @@ func GetCart(c *fiber.Ctx, paramId string) (*models.Cart, error) {
 	return cart, err
 }
 
-func AddCartProduct(models.CartProduct) {
-	
-}
-
-func AddProductToCart(user *models.User) (*models.Cart, error) {
-	query := bson.M{"userid": user.ID}}
-
-	var newCartProduct bson.D
-
-	if cartProduct.ProductID != nil && cartProduct.TotalProduct != nil {
-		newCartProduct = append(newCartProduct, bson.E{Key: "productID", Value: cartProduct.ProductID})
-		newCartProduct = append(newCartProduct, bson.E{Key: "totalProduct", Value: cartProduct.TotalProduct})
-	}
+func AddProductToCart(user *models.User, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
+	cartCollection := config.MI.DB.Collection("carts")
+	query := bson.M{"userid": user.ID}
 
 	update := bson.D{
-		{Key: "$push", Value: bson.M{"product": newCartProduct}},
+		{Key: "$push", Value: bson.M{"product": cartProduct}},
 	}
 
-	err = productCollection.FindOneAndUpdate(context.Background(), query, update).Err()
+	err := cartCollection.FindOneAndUpdate(context.TODO(), query, update).Decode(cart)
+
+	if err != nil {
+		return cart, "failed to update"
+	}
+
+	return cart, "successfully"
+
 }

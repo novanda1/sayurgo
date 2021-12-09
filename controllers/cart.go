@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
+	"github.com/novanda1/sayurgo/models"
 	"github.com/novanda1/sayurgo/services"
 	"github.com/novanda1/sayurgo/utils"
 )
@@ -47,6 +46,14 @@ func GetCart(c *fiber.Ctx) error {
 }
 
 func AddProductToCart(c *fiber.Ctx) error {
+	cartProduct := &models.CartProduct{}
+
+	err := c.BodyParser(cartProduct)
+
+	if err != nil {
+		return err
+	}
+
 	phone := utils.GetPhoneFromJWT(c)
 
 	user, err := services.GetUserByPhone(phone)
@@ -59,19 +66,11 @@ func AddProductToCart(c *fiber.Ctx) error {
 		})
 	}
 
-	cart, err := services.AddProductToCart(c)
-
-	if err != nil {
-		fmt.Println(err)
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "failed to add",
-			"error":   err,
-		})
-	}
+	cart, msg := services.AddProductToCart(user, cartProduct)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
+		"message": msg,
 		"data": fiber.Map{
 			"cart": cart,
 		},

@@ -15,9 +15,11 @@ func Auth(c *fiber.Ctx) (token string, message string, user *models.User) {
 
 	if body.Phone == nil {
 		return "", "field phone is required", body
+	} else if err != nil {
+		return "", "failed to parse json", body
 	}
 
-	err, user = GetUserByPhone(c)
+	user, err = GetUserByPhone(*body.Phone)
 	if err != nil {
 		err, user = CreateUser(c)
 
