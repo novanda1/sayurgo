@@ -70,7 +70,7 @@ func AddProductToCart(c *fiber.Ctx) (*models.Cart, error) {
 		return data, err
 	}
 
-	query := bson.D{{Key: "_id", Value: id}, {Key: "product", Value: cartProduct.ProductID}}
+	query := bson.M{"_id": id, "product": bson.M{"$in": cartProduct.ID}}
 
 	var newCartProduct bson.D
 

@@ -9,17 +9,30 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth(c *fiber.Ctx) (string, error) {
-	err, user := GetUserByPhone(c)
-	if err != nil {
-		token, err := SignToken(user)
+func Auth(c *fiber.Ctx) (token string, message string, user *models.User) {
+	body := new(models.User)
+	err := c.BodyParser(body)
 
-		return token, err
+	if body.Phone == nil {
+		return "", "field phone is required", body
 	}
 
-	token, err := SignToken(user)
+	err, user = GetUserByPhone(c)
+	if err != nil {
+		err, user = CreateUser(c)
 
-	return token, err
+		if err != nil {
+			return "", "failed createuser", user
+		}
+
+		token, _ := SignToken(user)
+
+		return token, "successfully", user
+	}
+
+	token, _ = SignToken(user)
+
+	return token, "successfully", user
 }
 
 func SignToken(user *models.User) (string, error) {

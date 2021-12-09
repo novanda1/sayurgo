@@ -6,11 +6,7 @@ import (
 )
 
 func Auth(c *fiber.Ctx) error {
-	token, err := services.Auth(c)
+	token, message, user := services.Auth(c)
 
-	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	return c.JSON(fiber.Map{"token": token})
+	return c.JSON(fiber.Map{"token": token, "message": message, "user": user})
 }
