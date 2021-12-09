@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -53,24 +54,12 @@ func GetCart(c *fiber.Ctx, paramId string) (*models.Cart, error) {
 	return cart, err
 }
 
-func AddProductToCart(c *fiber.Ctx) (*models.Cart, error) {
-	productCollection := config.MI.DB.Collection("carts")
-	data := new(models.Cart)
-	cartProduct := new(models.CartProduct)
+func AddCartProduct(models.CartProduct) {
+	
+}
 
-	paramId := c.Params("id")
-
-	id, err := primitive.ObjectIDFromHex(paramId)
-	if err != nil {
-		return data, err
-	}
-
-	err = c.BodyParser(&cartProduct)
-	if err != nil {
-		return data, err
-	}
-
-	query := bson.M{"_id": id, "product": bson.M{"$in": cartProduct.ID}}
+func AddProductToCart(user *models.User) (*models.Cart, error) {
+	query := bson.M{"userid": user.ID}}
 
 	var newCartProduct bson.D
 
@@ -83,12 +72,5 @@ func AddProductToCart(c *fiber.Ctx) (*models.Cart, error) {
 		{Key: "$push", Value: bson.M{"product": newCartProduct}},
 	}
 
-	err = productCollection.FindOneAndUpdate(c.Context(), query, update).Err()
-
-	if err != nil {
-		return data, err
-	}
-
-	cart, err := GetCart(c, paramId)
-	return cart, err
+	err = productCollection.FindOneAndUpdate(context.Background(), query, update).Err()
 }

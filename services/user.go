@@ -69,18 +69,14 @@ func GetUser(c *fiber.Ctx, paramId string) (error, *models.User) {
 	return err, user
 }
 
-func GetUserByPhone(c *fiber.Ctx) (error, *models.User) {
-	data := new(models.User)
-
-	err := c.BodyParser(data)
-
+func GetUserByPhone(phone string) (*models.User, error) {
 	userCollection := config.MI.DB.Collection("users")
 	user := &models.User{}
 
-	query := bson.D{{Key: "phone", Value: data.Phone}}
-	err = userCollection.FindOne(c.Context(), query).Decode(user)
+	query := bson.D{{Key: "phone", Value: phone}}
+	err := userCollection.FindOne(nil, query).Decode(user)
 
-	return err, user
+	return user, err
 }
 
 func UpdateUser(c *fiber.Ctx) (error, *models.User) {

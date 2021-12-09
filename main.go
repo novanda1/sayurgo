@@ -8,6 +8,8 @@ import (
 	"github.com/novanda1/sayurgo/routes"
 
 	"github.com/joho/godotenv"
+
+	jwtware "github.com/gofiber/jwt/v3"
 )
 
 func setupRoutes(app *fiber.App) {
@@ -19,7 +21,9 @@ func setupRoutes(app *fiber.App) {
 
 	routes.AuthRoute(api.Group("/auth"))
 	routes.ProductRoute(api.Group("/products"))
-	routes.CartRoute(api.Group("/carts"))
+	routes.CartRoute(api.Group("/carts").Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("secret"),
+	})))
 
 }
 

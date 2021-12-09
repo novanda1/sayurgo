@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/services"
+	"github.com/novanda1/sayurgo/utils"
 )
 
 func CreateCart(c *fiber.Ctx) error {
@@ -46,6 +47,18 @@ func GetCart(c *fiber.Ctx) error {
 }
 
 func AddProductToCart(c *fiber.Ctx) error {
+	phone := utils.GetPhoneFromJWT(c)
+
+	user, err := services.GetUserByPhone(phone)
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "user not found", // not authenticated
+			"error":   err,
+		})
+	}
+
 	cart, err := services.AddProductToCart(c)
 
 	if err != nil {

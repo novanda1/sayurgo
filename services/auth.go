@@ -37,9 +37,9 @@ func Auth(c *fiber.Ctx) (token string, message string, user *models.User) {
 
 func SignToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
-		"name": user.DisplayName,
-		"id":   user.ID,
-		"exp":  time.Now().Add(time.Hour * 72).Unix(),
+		"phone": user.Phone,
+		"id":    user.ID,
+		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
