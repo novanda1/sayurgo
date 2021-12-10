@@ -56,8 +56,8 @@ func AddProductToCart(c *fiber.Ctx) error {
 		return err
 	}
 
-	paramId := c.Params("productid")
-	id, err := primitive.ObjectIDFromHex(paramId)
+	paramProductId := c.Params("productid")
+	id, err := primitive.ObjectIDFromHex(paramProductId)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": "false",
@@ -65,8 +65,11 @@ func AddProductToCart(c *fiber.Ctx) error {
 		})
 	}
 
-	services.GetProduct(id)
+	cartProduct.ProductID = &paramProductId
 	errors := cartProduct.Validate(*cartProduct)
+	if errors != nil {
+		return c.JSON(errors)
+	}
 
 	_, err = services.GetProduct(id)
 	if err != nil {
@@ -75,10 +78,6 @@ func AddProductToCart(c *fiber.Ctx) error {
 			"message": "Product Not found",
 			"error":   err,
 		})
-	}
-
-	if errors != nil {
-		return c.JSON(errors)
 	}
 
 	phone := utils.GetPhoneFromJWT(c)
