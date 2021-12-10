@@ -2,38 +2,43 @@ package models
 
 import (
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type Product struct {
 	ID            *string   `json:"id,omitempty" bson:"_id,omitempty"`
-	Title         *string   `json:"title,omitempty"`
-	Categories    *[]string `json:"categories,omitempty"`
-	ImageUrl      *string   `json:"imageUrl,omitempty"`
-	Price         *int      `json:"price,omitempty"`
+	Title         *string   `json:"title,omitempty" validate:"required"`
+	Categories    *[]string `json:"categories,omitempty" validate:"required"`
+	ImageUrl      *string   `json:"imageUrl,omitempty" validate:"required"`
+	Price         *int      `json:"price,omitempty" validate:"required"`
 	DiscountPrice *int      `json:"discountPrice,omitempty"`
-	UnitType      *string   `json:"unitType,omitempty"`
-	Information   *string   `json:"information,omitempty"`
-	Nutrition     *string   `json:"nutrition,omitempty"`
+	UnitType      *string   `json:"unitType,omitempty" validate:"required"`
+	Information   *string   `json:"information,omitempty" validate:"required"`
+	Nutrition     *string   `json:"nutrition,omitempty" validate:"required"`
 	CreatedAt     time.Time `json:"createdAt,omitempty"`
 	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
 }
 
-func (c Product) ProductValid() bool {
-	if c.Title == nil {
-		return false
-	} else if c.Categories == nil {
-		return false
-	} else if c.ImageUrl == nil {
-		return false
-	} else if c.Price == nil {
-		return false
-	} else if c.UnitType == nil {
-		return false
-	} else if c.Information == nil {
-		return false
-	} else if c.Nutrition == nil {
-		return false
-	} else {
-		return true
+type ErrorResponse struct {
+	FailedField string
+	Tag         string
+	Value       string
+}
+
+func (c Product) Validate(product Product) []*ErrorResponse {
+	var errors []*ErrorResponse
+	validate := validator.New()
+
+	err := validate.Struct(product)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element ErrorResponse
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, &element)
+		}
 	}
+	return errors
 }

@@ -30,13 +30,19 @@ func GetProducts(c *fiber.Ctx) error {
 
 func CreateProduct(c *fiber.Ctx) error {
 	body := new(models.Product)
-	c.BodyParser(&body)
+	err := c.BodyParser(&body)
 
-	if body.ProductValid() == false {
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "product not valid",
+			"success":  false,
+			"messages": "failed to parse body",
 		})
+	}
+
+	errors := body.Validate(*body)
+
+	if errors != nil {
+		return c.JSON(errors)
 	}
 
 	err, product := services.CreateProduct(*body)
