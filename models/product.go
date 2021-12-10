@@ -11,12 +11,12 @@ type Product struct {
 	ID            *string   `json:"id,omitempty" bson:"_id,omitempty"`
 	Title         *string   `json:"title,omitempty" validate:"required"`
 	Categories    *[]string `json:"categories,omitempty" validate:"required"`
-	ImageUrl      *string   `json:"imageUrl,omitempty" validate:"required"`
-	Price         *int      `json:"price,omitempty" validate:"required"`
+	ImageUrl      *string   `json:"imageUrl,omitempty" validate:"required,url"`
+	Price         *int      `json:"price,omitempty" validate:"required,numeric"`
 	DiscountPrice *int      `json:"discountPrice,omitempty"`
 	UnitType      *string   `json:"unitType,omitempty" validate:"required"`
-	Information   *string   `json:"information,omitempty" validate:"required"`
-	Nutrition     *string   `json:"nutrition,omitempty" validate:"required"`
+	Information   *string   `json:"information,omitempty" validate:"required,alphanum"`
+	Nutrition     *string   `json:"nutrition,omitempty" validate:"required,alphanum"`
 	CreatedAt     time.Time `json:"createdAt,omitempty"`
 	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
 }
