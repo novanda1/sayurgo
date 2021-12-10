@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,18 +31,12 @@ func CreateCart(cart models.Cart) (*models.Cart, error) {
 	return &cart, err
 }
 
-func GetCart(c *fiber.Ctx, paramId string) (*models.Cart, error) {
+func GetCart(userID string) (*models.Cart, error) {
 	cartCollection := config.MI.DB.Collection("carts")
 	cart := &models.Cart{}
 
-	id, err := primitive.ObjectIDFromHex(paramId)
-
-	if err != nil {
-		return cart, err
-	}
-
-	query := bson.D{{Key: "_id", Value: id}}
-	err = cartCollection.FindOne(c.Context(), query).Decode(cart)
+	query := bson.D{{Key: "userid", Value: userID}}
+	err := cartCollection.FindOne(context.TODO(), query).Decode(cart)
 
 	return cart, err
 }
@@ -52,18 +45,7 @@ func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProdu
 	cartCollection := config.MI.DB.Collection("carts")
 	query := bson.M{"userid": userID}
 
-	var update bson.D
-
-	if cart.Product != nil {
-		update = append(update, bson.E{"$push", bson.M{"product": cartProduct.ID}})
-	} else {
-		var cartProductArray [1]string
-		cartProductArray[0] = *cartProduct.ID
-		update = append(update, bson.E{"$set", bson.M{"product": cartProductArray}})
-
-	}
-
-	err := cartCollection.FindOne(context.TODO(), query).Decode(&cart)
+	cart, err := GetCart(userID)
 
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
@@ -78,12 +60,18 @@ func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProdu
 		}
 	}
 
-	err = cartCollection.FindOneAndUpdate(context.Background(), query, update).Decode(cart)
-	fmt.Println(err, cart)
+	var dataToUpdate bson.D
+	dataToUpdate = append(dataToUpdate, bson.E{Key: "product", Value: cartProduct})
 
+	var update bson.D
+	update = append(update, primitive.E{Key: "$push", Value: dataToUpdate})
+
+	err = cartCollection.FindOneAndUpdate(context.TODO(), query, update).Decode(&models.Cart{})
 	if err != nil {
 		return cart, "update failed"
 	}
+
+	cart, err = GetCart(userID)
 
 	return cart, "successfully"
 
