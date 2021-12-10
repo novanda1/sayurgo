@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/novanda1/sayurgo/config"
@@ -133,10 +132,7 @@ func ChangeTotalProductInCart(productID primitive.ObjectID, userID primitive.Obj
 	query := bson.M{"userid": userID, "product.productID": productID}
 	update := bson.M{"$set": bson.M{"product.$.totalProduct": totalProduct}}
 
-	result, err := cartCollection.UpdateOne(context.TODO(), query, update)
-
-	fmt.Println(err)
-	fmt.Println(result)
+	_, err := cartCollection.UpdateOne(context.TODO(), query, update)
 
 	if err != nil {
 		message = "something went wrong when update"
