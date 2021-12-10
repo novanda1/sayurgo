@@ -5,6 +5,7 @@ import (
 	"github.com/novanda1/sayurgo/models"
 	"github.com/novanda1/sayurgo/services"
 	"github.com/novanda1/sayurgo/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateCart(c *fiber.Ctx) error {
@@ -50,14 +51,31 @@ func GetCart(c *fiber.Ctx) error {
 
 func AddProductToCart(c *fiber.Ctx) error {
 	cartProduct := &models.CartProduct{}
-
 	err := c.BodyParser(cartProduct)
-
 	if err != nil {
 		return err
 	}
 
+	paramId := c.Params("productid")
+	id, err := primitive.ObjectIDFromHex(paramId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": "false",
+			"message": "wrong param id",
+		})
+	}
+
+	services.GetProduct(id)
 	errors := cartProduct.Validate(*cartProduct)
+
+	_, err = services.GetProduct(id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Product Not found",
+			"error":   err,
+		})
+	}
 
 	if errors != nil {
 		return c.JSON(errors)
