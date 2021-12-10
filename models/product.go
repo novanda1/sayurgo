@@ -6,14 +6,14 @@ import (
 
 type Product struct {
 	ID            *string   `json:"id,omitempty" bson:"_id,omitempty"`
-	Title         *string   `json:"title"`
-	Categories    *[]string `json:"categories"`
-	ImageUrl      *string   `json:"imageUrl"`
-	Price         *int      `json:"price"`
-	DiscountPrice *int      `json:"discountPrice"`
-	UnitType      *string   `json:"unitType"`
-	Information   *string   `json:"information"`
-	Nutrition     *string   `json:"nutrition"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
+	Title         *string   `json:"title,omitempty"`
+	Categories    *[]string `json:"categories,omitempty"`
+	ImageUrl      *string   `json:"imageUrl,omitempty"`
+	Price         *int      `json:"price,omitempty"`
+	DiscountPrice *int      `json:"discountPrice,omitempty"`
+	UnitType      *string   `json:"unitType,omitempty"`
+	Information   *string   `json:"information,omitempty"`
+	Nutrition     *string   `json:"nutrition,omitempty"`
+	CreatedAt     time.Time `json:"createdAt,omitempty"`
+	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
 }
