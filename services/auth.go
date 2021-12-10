@@ -3,25 +3,15 @@ package services
 import (
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/models"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth(c *fiber.Ctx) (token string, message string, user *models.User) {
-	body := new(models.User)
-	err := c.BodyParser(body)
-
-	if body.Phone == nil {
-		return "", "field phone is required", body
-	} else if err != nil {
-		return "", "failed to parse json", body
-	}
-
-	user, err = GetUserByPhone(*body.Phone)
+func Auth(body *models.User) (token string, message string, user *models.User) {
+	user, err := GetUserByPhone(*body.Phone)
 	if err != nil {
-		err, user = CreateUser(c)
+		err, user = CreateUser(*body)
 
 		if err != nil {
 			return "", "failed createuser", user
