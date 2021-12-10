@@ -30,7 +30,7 @@ func CreateCart(c *fiber.Ctx) error {
 
 func GetCart(c *fiber.Ctx) error {
 	paramId := c.Params("id")
-	cart, err := services.GetCart(c, paramId)
+	cart, err := services.GetCart(paramId)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
