@@ -14,7 +14,7 @@ type Cart struct {
 	ID         *string        `json:"id,omitempty" bson:"_id,omitempty"`
 	UserID     *string        `json:"userid"`
 	TotalPrice *int           `json:"totalPrice"`
-	Product    *[]CartProduct `json:"product"`
+	Product    *[]CartProduct `json:"product,omitempty" bson:"product,omitempty"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
 }
