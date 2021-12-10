@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/models"
 
@@ -31,7 +30,7 @@ func CreateCart(cart models.Cart) (*models.Cart, error) {
 	return &cart, err
 }
 
-func GetCart(userID string) (*models.Cart, error) {
+func GetCart(userID primitive.ObjectID) (*models.Cart, error) {
 	cartCollection := config.MI.DB.Collection("carts")
 	cart := &models.Cart{}
 
@@ -41,7 +40,7 @@ func GetCart(userID string) (*models.Cart, error) {
 	return cart, err
 }
 
-func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
+func AddProductToCart(userID primitive.ObjectID, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
 	cartCollection := config.MI.DB.Collection("carts")
 	query := bson.M{"userid": userID}
 
@@ -50,7 +49,7 @@ func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProdu
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			cartOption := &models.Cart{}
-			cartOption.UserID = &userID
+			cartOption.UserID = userID
 
 			cart, err = CreateCart(*cartOption)
 
@@ -75,4 +74,33 @@ func AddProductToCart(c *fiber.Ctx, userID string, cartProduct *models.CartProdu
 
 	return cart, "successfully"
 
+}
+
+func IsProductAlreadyExists(productID primitive.ObjectID, userID primitive.ObjectID) bool {
+	cartCollection := config.MI.DB.Collection("carts")
+	_, err := GetCart(userID)
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			cartOption := &models.Cart{}
+			cartOption.UserID = userID
+
+			_, err = CreateCart(*cartOption)
+			if err != nil {
+				return false
+			}
+
+			return false
+		}
+	}
+
+	count, err := cartCollection.CountDocuments(context.Background(), bson.M{"userid": userID, "product.productID": productID})
+	if err != nil {
+		return false
+	}
+
+	if count != 0 {
+		return true
+	}
+
+	return false
 }
