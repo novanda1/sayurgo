@@ -49,14 +49,14 @@ func CreateProduct(body models.Product) (error, *models.Product) {
 	return err, product
 }
 
-func GetProduct(id primitive.ObjectID) (error, *models.Product) {
+func GetProduct(id primitive.ObjectID) (*models.Product, error) {
 	productCollection := config.MI.DB.Collection("products")
 	product := &models.Product{}
 
 	query := bson.D{{Key: "_id", Value: id}}
 	err := productCollection.FindOne(context.TODO(), query).Decode(product)
 
-	return err, product
+	return product, err
 }
 
 func UpdateProduct(id primitive.ObjectID, data *models.Product) (error, *models.Product) {
@@ -110,7 +110,7 @@ func UpdateProduct(id primitive.ObjectID, data *models.Product) (error, *models.
 		return err, data
 	}
 
-	_, product := GetProduct(id)
+	product, err := GetProduct(id)
 	return err, product
 }
 
