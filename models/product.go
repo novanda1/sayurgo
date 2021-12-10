@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	sharedTypes "github.com/novanda1/sayurgo/shared-types"
 )
 
 type Product struct {
@@ -20,20 +21,14 @@ type Product struct {
 	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
 }
 
-type ErrorResponse struct {
-	FailedField string
-	Tag         string
-	Value       string
-}
-
-func (c Product) Validate(product Product) []*ErrorResponse {
-	var errors []*ErrorResponse
+func (c Product) Validate(product Product) []*sharedTypes.ErrorResponse {
+	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()
 
 	err := validate.Struct(product)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			var element ErrorResponse
+			var element sharedTypes.ErrorResponse
 			element.FailedField = err.StructNamespace()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
