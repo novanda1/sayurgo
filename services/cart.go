@@ -80,17 +80,7 @@ func IsProductAlreadyExists(productID primitive.ObjectID, userID primitive.Objec
 	cartCollection := config.MI.DB.Collection("carts")
 	_, err := GetCart(userID)
 	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			cartOption := &models.Cart{}
-			cartOption.UserID = userID
-
-			_, err = CreateCart(*cartOption)
-			if err != nil {
-				return false
-			}
-
-			return false
-		}
+		return false
 	}
 
 	count, err := cartCollection.CountDocuments(context.Background(), bson.M{"userid": userID, "product.productID": productID})
