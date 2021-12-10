@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,80 +12,55 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AllProducts(c *fiber.Ctx) (error, []models.Product) {
+func AllProducts() (error, []models.Product) {
 	productCollection := config.MI.DB.Collection("products")
 
 	var products []models.Product = make([]models.Product, 0)
 	query := bson.D{{}}
 
-	cursor, err := productCollection.Find(c.Context(), query)
+	cursor, err := productCollection.Find(context.TODO(), query)
 
 	if err != nil {
 		return err, products
 	}
 
-	cursor.All(c.Context(), &products)
+	cursor.All(context.TODO(), &products)
 
 	return err, products
 }
 
-func CreateProduct(c *fiber.Ctx) (error, *models.Product) {
+func CreateProduct(body models.Product) (error, *models.Product) {
 	productCollection := config.MI.DB.Collection("products")
-	data := new(models.Product)
 
-	err := c.BodyParser(&data)
-	if err != nil {
-		return err, data
-	}
+	body.ID = nil
+	body.CreatedAt = time.Now()
+	body.UpdatedAt = time.Now()
 
-	data.ID = nil
-	data.CreatedAt = time.Now()
-	data.UpdatedAt = time.Now()
-
-	result, err := productCollection.InsertOne(c.Context(), data)
+	result, err := productCollection.InsertOne(context.TODO(), body)
 
 	if err != nil {
-		return err, data
+		return err, &body
 	}
 
 	product := &models.Product{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
-	productCollection.FindOne(c.Context(), query).Decode(product)
+	productCollection.FindOne(context.TODO(), query).Decode(product)
 
 	return err, product
 }
 
-func GetProduct(c *fiber.Ctx, paramId string) (error, *models.Product) {
+func GetProduct(id primitive.ObjectID) (error, *models.Product) {
 	productCollection := config.MI.DB.Collection("products")
 	product := &models.Product{}
 
-	id, err := primitive.ObjectIDFromHex(paramId)
-
-	if err != nil {
-		return err, product
-	}
-
 	query := bson.D{{Key: "_id", Value: id}}
-	err = productCollection.FindOne(c.Context(), query).Decode(product)
+	err := productCollection.FindOne(context.TODO(), query).Decode(product)
 
 	return err, product
 }
 
-func UpdateProduct(c *fiber.Ctx) (error, *models.Product) {
+func UpdateProduct(id primitive.ObjectID, data *models.Product) (error, *models.Product) {
 	productCollection := config.MI.DB.Collection("products")
-	data := new(models.Product)
-
-	paramId := c.Params("id")
-
-	id, err := primitive.ObjectIDFromHex(paramId)
-	if err != nil {
-		return err, data
-	}
-
-	err = c.BodyParser(&data)
-	if err != nil {
-		return err, data
-	}
 
 	query := bson.D{{Key: "_id", Value: id}}
 
@@ -129,12 +105,12 @@ func UpdateProduct(c *fiber.Ctx) (error, *models.Product) {
 		{Key: "$set", Value: dataToUpdate},
 	}
 
-	err = productCollection.FindOneAndUpdate(c.Context(), query, update).Err()
+	err := productCollection.FindOneAndUpdate(context.TODO(), query, update).Err()
 	if err != nil {
 		return err, data
 	}
 
-	_, product := GetProduct(c, paramId)
+	_, product := GetProduct(id)
 	return err, product
 }
 
