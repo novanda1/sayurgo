@@ -10,4 +10,5 @@ func CartRoute(route fiber.Router) {
 	route.Post("/", controllers.CreateCart)
 	route.Post("/:productid", controllers.AddProductToCart)
 	route.Delete("/:productid", controllers.DeleteProductFromCart)
+	route.Put("/:productid", controllers.ChangeTotalProductInCart)
 }

@@ -143,3 +143,38 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 		"error":   err,
 	})
 }
+
+func ChangeTotalProductInCart(c *fiber.Ctx) error {
+	paramId := c.Params("productid")
+	productID, err := primitive.ObjectIDFromHex(paramId)
+	phone := utils.GetPhoneFromJWT(c)
+	user, err := services.GetUserByPhone(phone)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "user not found", // not authenticated
+			"error":   err,
+		})
+	}
+	userID, err := primitive.ObjectIDFromHex(*user.ID)
+
+	_, err = services.GetCart(userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "cart Not found",
+			"error":   err,
+		})
+	}
+
+	cartProduct := new(models.CartProduct)
+	c.BodyParser(&cartProduct)
+
+	message, success, data := services.ChangeTotalProductInCart(productID, userID, *cartProduct.TotalProduct)
+
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		"success": success,
+		"message": message,
+		"data":    data,
+	})
+}

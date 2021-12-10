@@ -108,10 +108,7 @@ func DeleteProductFromCart(productID primitive.ObjectID, userID primitive.Object
 	query := bson.M{"userid": userID}
 	update := bson.M{"$pull": bson.M{"product": bson.M{"productID": productID}}}
 
-	result, err := cartCollection.UpdateMany(context.TODO(), query, update)
-
-	fmt.Println(err)
-	fmt.Println(result)
+	_, err := cartCollection.UpdateMany(context.TODO(), query, update)
 
 	if err != nil {
 		message = "something went wrong when update"
@@ -122,4 +119,34 @@ func DeleteProductFromCart(productID primitive.ObjectID, userID primitive.Object
 	message = "product deleted successfully"
 	success = true
 	return
+}
+
+func ChangeTotalProductInCart(productID primitive.ObjectID, userID primitive.ObjectID, totalProduct int) (message string, success bool, data *models.Cart) {
+	cartCollection := config.MI.DB.Collection("carts")
+	isExists := IsProductAlreadyExists(productID, userID)
+	if !isExists {
+		message = "product didn't even exists"
+		success = false
+		return
+	}
+
+	query := bson.M{"userid": userID, "product.productID": productID}
+	update := bson.M{"$set": bson.M{"product.$.totalProduct": totalProduct}}
+
+	result, err := cartCollection.UpdateOne(context.TODO(), query, update)
+
+	fmt.Println(err)
+	fmt.Println(result)
+
+	if err != nil {
+		message = "something went wrong when update"
+		success = false
+		return
+	}
+
+	data, _ = GetCart(userID)
+	message = "product updated successfully"
+	success = true
+	return
+
 }
