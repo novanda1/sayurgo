@@ -74,8 +74,7 @@ func GetProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	err, product := services.GetProduct(id)
-
+	product, err := services.GetProduct(id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -106,7 +105,6 @@ func UpdateProduct(c *fiber.Ctx) error {
 
 	body := new(models.Product)
 	err = c.BodyParser(&body)
-
 	if err != nil {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"success": false,
@@ -114,8 +112,16 @@ func UpdateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	err, product := services.UpdateProduct(id, body)
+	product, err := services.GetProduct(id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Product Not found",
+			"error":   err,
+		})
+	}
 
+	err, product = services.UpdateProduct(id, body)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
