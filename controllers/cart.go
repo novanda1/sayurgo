@@ -57,6 +57,12 @@ func AddProductToCart(c *fiber.Ctx) error {
 		return err
 	}
 
+	errors := cartProduct.Validate(*cartProduct)
+
+	if errors != nil {
+		return c.JSON(errors)
+	}
+
 	phone := utils.GetPhoneFromJWT(c)
 
 	user, err := services.GetUserByPhone(phone)
