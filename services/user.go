@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,28 +28,21 @@ func AllUsers(c *fiber.Ctx) ([]models.User, error) {
 	return users, err
 }
 
-func CreateUser(c *fiber.Ctx) (error, *models.User) {
+func CreateUser(data models.User) (error, *models.User) {
 	userCollection := config.MI.DB.Collection("users")
-	data := new(models.User)
-
-	err := c.BodyParser(&data)
-	if err != nil {
-		return err, data
-	}
-
 	data.ID = nil
 	data.CreatedAt = time.Now()
 	data.UpdatedAt = time.Now()
 
-	result, err := userCollection.InsertOne(c.Context(), data)
+	result, err := userCollection.InsertOne(context.Background(), data)
 
 	if err != nil {
-		return err, data
+		return err, &data
 	}
 
 	user := &models.User{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
-	userCollection.FindOne(c.Context(), query).Decode(user)
+	userCollection.FindOne(context.TODO(), query).Decode(user)
 
 	return err, user
 }
