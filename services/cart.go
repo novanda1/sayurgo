@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/novanda1/sayurgo/config"
@@ -93,4 +94,32 @@ func IsProductAlreadyExists(productID primitive.ObjectID, userID primitive.Objec
 	}
 
 	return false
+}
+
+func DeleteProductFromCart(productID primitive.ObjectID, userID primitive.ObjectID) (message string, success bool) {
+	cartCollection := config.MI.DB.Collection("carts")
+	isExists := IsProductAlreadyExists(productID, userID)
+	if !isExists {
+		message = "product didn't even exists"
+		success = false
+		return
+	}
+
+	query := bson.M{"userid": userID}
+	update := bson.M{"$pull": bson.M{"product": bson.M{"productID": productID}}}
+
+	result, err := cartCollection.UpdateMany(context.TODO(), query, update)
+
+	fmt.Println(err)
+	fmt.Println(result)
+
+	if err != nil {
+		message = "something went wrong when update"
+		success = false
+		return
+	}
+
+	message = "product deleted successfully"
+	success = true
+	return
 }
