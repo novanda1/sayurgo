@@ -1,0 +1,9 @@
+services:
+  mongodb1:
+    image: mongo:latest
+    container_name: mongodb1
+    ports:
+      - "27018:27017"
+
+volumes:
+  mongodata1: null
