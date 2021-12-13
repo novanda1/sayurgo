@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/novanda1/sayurgo/customer/services"
 	"github.com/novanda1/sayurgo/models"
-	"github.com/novanda1/sayurgo/services"
 )
 
 func Auth(c *fiber.Ctx) error {

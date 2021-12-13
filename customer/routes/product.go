@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/novanda1/sayurgo/controllers"
+	"github.com/novanda1/sayurgo/customer/controllers"
 )
 
 func ProductRoute(route fiber.Router) {

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/novanda1/sayurgo/services"
+	"github.com/novanda1/sayurgo/customer/services"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

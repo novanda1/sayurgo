@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	adminRoutes "github.com/novanda1/sayurgo/admin/routes"
 	"github.com/novanda1/sayurgo/config"
-	"github.com/novanda1/sayurgo/routes"
+	"github.com/novanda1/sayurgo/customer/routes"
 
 	"github.com/joho/godotenv"
 
