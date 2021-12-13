@@ -25,7 +25,7 @@ func AdminCreateProduct(c *fiber.Ctx) error {
 		return c.JSON(errors)
 	}
 
-	err, product := services.CreateProduct(*body)
+	product, err := services.CreateProduct(*body)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -63,7 +63,7 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	product, err := services.GetProduct(id)
+	_, err = services.GetProduct(id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -72,7 +72,7 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	err, product = services.UpdateProduct(id, body)
+	product, err := services.UpdateProduct(id, body)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,

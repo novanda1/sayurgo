@@ -28,7 +28,7 @@ func AllUsers(c *fiber.Ctx) ([]models.User, error) {
 	return users, err
 }
 
-func CreateUser(data models.User) (error, *models.User) {
+func CreateUser(data models.User) (*models.User, error) {
 	userCollection := config.MI.DB.Collection("users")
 	data.ID = nil
 	data.CreatedAt = time.Now()
@@ -37,30 +37,30 @@ func CreateUser(data models.User) (error, *models.User) {
 	result, err := userCollection.InsertOne(context.Background(), data)
 
 	if err != nil {
-		return err, &data
+		return &data, err
 	}
 
 	user := &models.User{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 	userCollection.FindOne(context.TODO(), query).Decode(user)
 
-	return err, user
+	return user, err
 }
 
-func GetUser(c *fiber.Ctx, paramId string) (error, *models.User) {
+func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
 	userCollection := config.MI.DB.Collection("users")
 	user := &models.User{}
 
 	id, err := primitive.ObjectIDFromHex(paramId)
 
 	if err != nil {
-		return err, user
+		return user, err
 	}
 
 	query := bson.D{{Key: "_id", Value: id}}
 	err = userCollection.FindOne(c.Context(), query).Decode(user)
 
-	return err, user
+	return user, err
 }
 
 func GetUserByPhone(phone string) (*models.User, error) {
@@ -68,12 +68,12 @@ func GetUserByPhone(phone string) (*models.User, error) {
 	user := &models.User{}
 
 	query := bson.D{{Key: "phone", Value: phone}}
-	err := userCollection.FindOne(nil, query).Decode(user)
+	err := userCollection.FindOne(context.Background(), query).Decode(user)
 
 	return user, err
 }
 
-func UpdateUser(c *fiber.Ctx) (error, *models.User) {
+func UpdateUser(c *fiber.Ctx) (*models.User, error) {
 	userCollection := config.MI.DB.Collection("users")
 	data := new(models.User)
 
@@ -81,12 +81,12 @@ func UpdateUser(c *fiber.Ctx) (error, *models.User) {
 
 	id, err := primitive.ObjectIDFromHex(paramId)
 	if err != nil {
-		return err, data
+		return data, err
 	}
 
 	err = c.BodyParser(&data)
 	if err != nil {
-		return err, data
+		return data, err
 	}
 
 	query := bson.D{{Key: "_id", Value: id}}
@@ -115,10 +115,10 @@ func UpdateUser(c *fiber.Ctx) (error, *models.User) {
 	// update
 	err = userCollection.FindOneAndUpdate(c.Context(), query, update).Err()
 	if err != nil {
-		return err, data
+		return data, err
 	}
 
-	_, user := GetUser(c, paramId)
-	return err, user
+	user, _ := GetUser(c, paramId)
+	return user, err
 
 }

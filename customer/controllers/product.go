@@ -8,7 +8,7 @@ import (
 )
 
 func GetProducts(c *fiber.Ctx) error {
-	err, products := services.AllProducts()
+	products, err := services.AllProducts()
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
