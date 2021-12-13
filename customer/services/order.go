@@ -19,7 +19,6 @@ func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
 }
 
 func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.Order, err error) {
-	// productCollection := config.MI.DB.Collection("product")
 	orderCollection := config.MI.DB.Collection("order")
 	order = new(models.Order)
 
@@ -49,5 +48,10 @@ func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.O
 
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 	err = orderCollection.FindOne(context.Background(), query).Decode(order)
+
+	if err == nil {
+		ClearProductsInCart(userID)
+	}
+
 	return order, err
 }

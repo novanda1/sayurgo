@@ -168,3 +168,16 @@ func IsHasProductOnCart(userID primitive.ObjectID) (hasProduct bool, err error) 
 	hasProduct = true
 	return
 }
+
+func ClearProductsInCart(userID primitive.ObjectID) (cart *models.Cart) {
+	cartCollection := config.MI.DB.Collection("carts")
+	var cartProduct []models.CartProduct = make([]models.CartProduct, 0)
+
+	query := bson.D{{Key: "userid", Value: userID}}
+	update := bson.M{"$set": bson.M{
+		"product": cartProduct,
+	}}
+
+	cartCollection.FindOneAndUpdate(context.Background(), query, update).Decode(cart)
+	return cart
+}
