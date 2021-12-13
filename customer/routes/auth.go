@@ -7,4 +7,5 @@ import (
 
 func AuthRoute(route fiber.Router) {
 	route.Post("/login", controllers.Auth)
+	route.Post("/verif", controllers.AuthVerif)
 }

@@ -3,12 +3,16 @@ package services
 import (
 	"time"
 
+	"github.com/hgfischer/go-otp"
 	"github.com/novanda1/sayurgo/models"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth(body *models.User) (token string, message string, user *models.User) {
+var secret = `12345678901234567890`
+var hotp = &otp.TOTP{Secret: secret, Length: 6, IsBase32Secret: true, Period: 60}
+
+func Auth(body *models.User) (otpkey string, message string, user *models.User) {
 	user, err := GetUserByPhone(*body.Phone)
 	if err != nil {
 		err, user = CreateUser(*body)
@@ -16,15 +20,16 @@ func Auth(body *models.User) (token string, message string, user *models.User) {
 		if err != nil {
 			return "", "failed createuser", user
 		}
-
-		token, _ := SignToken(user)
-
-		return token, "successfully", user
 	}
 
-	token, _ = SignToken(user)
+	otpkey = hotp.Get()
 
-	return token, "successfully", user
+	return otpkey, "successfully", user
+}
+
+func AuthVerif(otpkey *string) bool {
+	verif := hotp.Verify(*otpkey)
+	return verif
 }
 
 func SignToken(user *models.User) (string, error) {
