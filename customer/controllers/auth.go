@@ -7,7 +7,8 @@ import (
 )
 
 type verifParams struct {
-	Otp *string `json:"otp,omitempty" bson:"otp,omitempty"`
+	Otp   *string `json:"otp,omitempty" bson:"otp,omitempty"`
+	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
 func Auth(c *fiber.Ctx) error {
@@ -26,8 +27,8 @@ func Auth(c *fiber.Ctx) error {
 		return c.JSON(errors)
 	}
 
-	token, message, user := services.Auth(body)
-	return c.JSON(fiber.Map{"token": token, "message": message, "user": user})
+	otp, err := services.Auth(body)
+	return c.JSON(fiber.Map{"otp": otp, "error": err.Error()})
 }
 
 func AuthVerif(c *fiber.Ctx) error {
@@ -41,6 +42,6 @@ func AuthVerif(c *fiber.Ctx) error {
 		})
 	}
 
-	verif := services.AuthVerif(body.Otp)
-	return c.JSON(fiber.Map{"verif": verif})
+	verif := services.AuthVerif(body.Phone, body.Otp)
+	return c.JSON(fiber.Map{"verified": verif})
 }
