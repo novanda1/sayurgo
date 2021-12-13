@@ -146,3 +146,25 @@ func ChangeTotalProductInCart(productID primitive.ObjectID, userID primitive.Obj
 	return
 
 }
+
+func IsHasProductOnCart(userID primitive.ObjectID) (hasProduct bool, err error) {
+	hasProduct = false
+
+	cart, err := GetCart(userID)
+	if err != nil {
+		return
+	}
+
+	cartProductLength := len(*cart.Product)
+
+	if cart.Product == nil {
+		return
+	}
+
+	if cartProductLength <= 0 {
+		return
+	}
+
+	hasProduct = true
+	return
+}
