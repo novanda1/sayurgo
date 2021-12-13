@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/helmet/v2"
 	adminRoutes "github.com/novanda1/sayurgo/admin/routes"
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/customer/routes"
@@ -44,6 +45,7 @@ func setupAdminRoutes(app *fiber.App) {
 
 func main() {
 	app := fiber.New()
+	app.Use(helmet.New())
 
 	err := godotenv.Load()
 	if err != nil {
