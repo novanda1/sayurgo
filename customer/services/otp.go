@@ -64,6 +64,13 @@ func ModifyOtpKey(phone *string, newOtp *string) (otp *models.Otp, err error) {
 	return
 }
 
+func DeleteOtp(phone *string) (err error) {
+	otpCollection := config.MI.DB.Collection("otps")
+	query := bson.M{"phone": phone}
+	err = otpCollection.FindOneAndDelete(context.Background(), query).Err()
+	return
+}
+
 func VerifyOtp(phone *string, otpkey *string) (verified bool) {
 	verified = false
 	otp, err := GetOtpByPhone(phone)
@@ -71,6 +78,8 @@ func VerifyOtp(phone *string, otpkey *string) (verified bool) {
 		return
 	} else if otp.Otp == otpkey {
 		verified = true
+		DeleteOtp(phone)
+
 		return
 	} else {
 		return
