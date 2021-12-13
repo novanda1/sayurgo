@@ -18,6 +18,20 @@ func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
 	return
 }
 
+func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err error) {
+	orderCollection := config.MI.DB.Collection("order")
+	var orders []models.Order = make([]models.Order, 0)
+
+	query := bson.D{{Key: "userid", Value: userID}}
+	cursor, err := orderCollection.Find(context.TODO(), query)
+	if err != nil {
+		return order, err
+	}
+
+	cursor.All(context.Background(), &orders)
+	return &orders, err
+}
+
 func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.Order, err error) {
 	orderCollection := config.MI.DB.Collection("order")
 	order = new(models.Order)

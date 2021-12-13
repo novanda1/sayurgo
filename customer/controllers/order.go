@@ -59,3 +59,27 @@ func CreateOrder(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func GetOrders(c *fiber.Ctx) error {
+	useridString := utils.GetUseridFromJWT(c)
+	userID, err := primitive.ObjectIDFromHex(useridString)
+	if err != nil {
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"success": false,
+			"message": "failed to parse body",
+		})
+	}
+
+	order, err := services.GetOrdersByUserID(userID)
+	if err != nil {
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"success": false,
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    order,
+	})
+}
