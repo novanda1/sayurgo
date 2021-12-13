@@ -11,6 +11,12 @@ import (
 func CreateCart(c *fiber.Ctx) error {
 	body := &models.Cart{}
 	err := c.BodyParser(body)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
 
 	cart, err := services.CreateCart(*body)
 
@@ -32,6 +38,13 @@ func CreateCart(c *fiber.Ctx) error {
 func GetCart(c *fiber.Ctx) error {
 	phone := utils.GetPhoneFromJWT(c)
 	user, err := services.GetUserByPhone(phone)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
+
 	userID, _ := primitive.ObjectIDFromHex(*user.ID)
 	cart, err := services.GetCart(userID)
 
@@ -114,6 +127,12 @@ func AddProductToCart(c *fiber.Ctx) error {
 func DeleteProductFromCart(c *fiber.Ctx) error {
 	paramId := c.Params("productid")
 	productID, err := primitive.ObjectIDFromHex(paramId)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
 
 	phone := utils.GetPhoneFromJWT(c)
 	user, err := services.GetUserByPhone(phone)
@@ -126,6 +145,12 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 	}
 
 	userID, err := primitive.ObjectIDFromHex(*user.ID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
 
 	_, err = services.GetCart(userID)
 	if err != nil {
@@ -148,6 +173,12 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 func ChangeTotalProductInCart(c *fiber.Ctx) error {
 	paramId := c.Params("productid")
 	productID, err := primitive.ObjectIDFromHex(paramId)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
 	phone := utils.GetPhoneFromJWT(c)
 	user, err := services.GetUserByPhone(phone)
 	if err != nil {
@@ -158,6 +189,12 @@ func ChangeTotalProductInCart(c *fiber.Ctx) error {
 		})
 	}
 	userID, err := primitive.ObjectIDFromHex(*user.ID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"error":   err.Error(),
+		})
+	}
 
 	_, err = services.GetCart(userID)
 	if err != nil {
