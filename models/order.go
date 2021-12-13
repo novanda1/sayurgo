@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -9,18 +8,31 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type OrderStatus struct{ Status string }
+type OrderStatus string
 
 var (
-	Waiting    = OrderStatus{"waiting"}
-	Process    = OrderStatus{"process"}
-	OnDelivery = OrderStatus{"on delivery"}
-	Completed  = OrderStatus{"completed"}
-	Issued     = OrderStatus{"issued"}
+	Waiting    OrderStatus = "waiting"
+	Process    OrderStatus = "process"
+	OnDelivery OrderStatus = "on delivery"
+	Completed  OrderStatus = "completed"
+	Issued     OrderStatus = "issued"
 )
 
-func (r OrderStatus) String() string {
-	return r.Status
+func (s OrderStatus) String() string {
+	switch s {
+	case Waiting:
+		return "waiting"
+	case Process:
+		return "process"
+	case OnDelivery:
+		return "on delivery"
+	case Completed:
+		return "completed"
+	case Issued:
+		return "issued"
+	}
+
+	return "waiting"
 }
 
 type OrderProduct struct {
@@ -34,7 +46,7 @@ type Order struct {
 	UserID     primitive.ObjectID `json:"userid,omitempty" bson:"userid,omitempty"`
 	Products   *[]OrderProduct    `json:"products,omitempty" bson:"products,omitempty"`
 	TotalPrice *int               `json:"totalPrice,omitempty" bson:"totalPrice,omitempty"`
-	Status     *OrderStatus       `json:"orderStatus,omitempty" bson:"orderStatus,omitempty"`
+	Status     string             `json:"orderStatus,omitempty" bson:"orderStatus,omitempty"`
 	CreatedAt  time.Time          `json:"createdAt,omitempty"`
 	UpdatedAt  time.Time          `json:"updatedAt,omitempty"`
 }
@@ -53,8 +65,6 @@ func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
 			errors = append(errors, &element)
 		}
 	}
-
-	fmt.Println(OrderStatus.String(*order.Status))
 
 	return errors
 }
