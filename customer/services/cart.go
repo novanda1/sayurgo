@@ -70,7 +70,7 @@ func AddProductToCart(userID primitive.ObjectID, cartProduct *models.CartProduct
 		return cart, "update failed"
 	}
 
-	cart, err = GetCart(userID)
+	cart, _ = GetCart(userID)
 
 	return cart, "successfully"
 
