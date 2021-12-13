@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"time"
 
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/models"
@@ -67,6 +68,9 @@ func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.O
 	body.UserID = userID
 	body.TotalPrice = &totalPrice
 	body.Status = models.OrderStatus.String("waiting")
+	body.CreatedAt = time.Now()
+	body.UpdatedAt = time.Now()
+
 	result, err := orderCollection.InsertOne(context.TODO(), body)
 
 	if err != nil {
