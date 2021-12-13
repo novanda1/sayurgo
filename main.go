@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	adminRoutes "github.com/novanda1/sayurgo/admin/routes"
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/routes"
 
@@ -27,6 +28,14 @@ func setupRoutes(app *fiber.App) {
 
 }
 
+func setupAdminRoutes(app *fiber.App) {
+	admin := app.Group("/admin").Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("adminsecret"),
+	}))
+
+	adminRoutes.ProductRoute(admin.Group("/products"))
+}
+
 func main() {
 	app := fiber.New()
 
@@ -37,6 +46,7 @@ func main() {
 
 	config.ConnectDB()
 
+	setupAdminRoutes(app)
 	setupRoutes(app)
 
 	err = app.Listen(":3000")
