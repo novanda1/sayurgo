@@ -25,6 +25,9 @@ func setupRoutes(app *fiber.App) {
 	routes.CartRoute(api.Group("/carts").Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("secret"),
 	})))
+	routes.OrderRoute(api.Group("/order").Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("secret"),
+	})))
 }
 
 func setupAdminRoutes(app *fiber.App) {
