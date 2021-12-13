@@ -6,7 +6,7 @@ import (
 )
 
 func CartRoute(route fiber.Router) {
-	route.Get("/:id", controllers.GetCart)
+	route.Get("", controllers.GetCart)
 	route.Post("/", controllers.CreateCart)
 	route.Post("/:productid", controllers.AddProductToCart)
 	route.Delete("/:productid", controllers.DeleteProductFromCart)
