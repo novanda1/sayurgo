@@ -27,19 +27,31 @@ func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.O
 		return body, err
 	}
 
+	var totalPrice int
 	var orderProducts = []models.OrderProduct{}
 	for _, c := range *cart.Product {
 		product, _ := GetProduct(c.ProductID)
+		var price int
+
+		if product.DiscountPrice != nil {
+			price = *product.DiscountPrice
+		} else {
+			price = *product.Price
+		}
 
 		var orderProduct models.OrderProduct
 
 		orderProduct.ProductID = c.ProductID
 		orderProduct.TotalProduct = c.TotalProduct
-		orderProduct.AtPrice = product.Price
+		orderProduct.AtPrice = &price
+
+		totalPrice += price
 		orderProducts = append(orderProducts, orderProduct)
 	}
 
 	body.Products = &orderProducts
+	body.UserID = userID
+	body.TotalPrice = &totalPrice
 	result, err := orderCollection.InsertOne(context.TODO(), body)
 
 	if err != nil {

@@ -30,13 +30,13 @@ type OrderProduct struct {
 }
 
 type Order struct {
-	ID         *string         `json:"id,omitempty" bson:"_id,omitempty"`
-	UserID     *string         `json:"userid,omitempty" bson:"userid,omitempty"`
-	Products   *[]OrderProduct `json:"products,omitempty" bson:"products,omitempty"`
-	TotalPrice *int            `json:"totalPrice,omitempty" bson:"totalPrice,omitempty"`
-	Status     *OrderStatus    `json:"orderStatus,omitempty" bson:"orderStatus,omitempty"`
-	CreatedAt  time.Time       `json:"createdAt,omitempty"`
-	UpdatedAt  time.Time       `json:"updatedAt,omitempty"`
+	ID         *string            `json:"id,omitempty" bson:"_id,omitempty"`
+	UserID     primitive.ObjectID `json:"userid,omitempty" bson:"userid,omitempty"`
+	Products   *[]OrderProduct    `json:"products,omitempty" bson:"products,omitempty"`
+	TotalPrice *int               `json:"totalPrice,omitempty" bson:"totalPrice,omitempty"`
+	Status     *OrderStatus       `json:"orderStatus,omitempty" bson:"orderStatus,omitempty"`
+	CreatedAt  time.Time          `json:"createdAt,omitempty"`
+	UpdatedAt  time.Time          `json:"updatedAt,omitempty"`
 }
 
 func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
