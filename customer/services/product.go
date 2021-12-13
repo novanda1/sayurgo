@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AllProducts() (error, []models.Product) {
+func AllProducts() ([]models.Product, error) {
 	productCollection := config.MI.DB.Collection("products")
 
 	var products []models.Product = make([]models.Product, 0)
@@ -21,15 +21,15 @@ func AllProducts() (error, []models.Product) {
 	cursor, err := productCollection.Find(context.TODO(), query)
 
 	if err != nil {
-		return err, products
+		return products, err
 	}
 
 	cursor.All(context.TODO(), &products)
 
-	return err, products
+	return products, err
 }
 
-func CreateProduct(body models.Product) (error, *models.Product) {
+func CreateProduct(body models.Product) (*models.Product, error) {
 	productCollection := config.MI.DB.Collection("products")
 
 	body.ID = nil
@@ -39,14 +39,14 @@ func CreateProduct(body models.Product) (error, *models.Product) {
 	result, err := productCollection.InsertOne(context.TODO(), body)
 
 	if err != nil {
-		return err, &body
+		return &body, err
 	}
 
 	product := &models.Product{}
 	query := bson.D{{Key: "_id", Value: result.InsertedID}}
 	productCollection.FindOne(context.TODO(), query).Decode(product)
 
-	return err, product
+	return product, err
 }
 
 func GetProduct(id primitive.ObjectID) (*models.Product, error) {
@@ -59,7 +59,7 @@ func GetProduct(id primitive.ObjectID) (*models.Product, error) {
 	return product, err
 }
 
-func UpdateProduct(id primitive.ObjectID, data *models.Product) (error, *models.Product) {
+func UpdateProduct(id primitive.ObjectID, data *models.Product) (*models.Product, error) {
 	productCollection := config.MI.DB.Collection("products")
 
 	query := bson.D{{Key: "_id", Value: id}}
@@ -107,11 +107,11 @@ func UpdateProduct(id primitive.ObjectID, data *models.Product) (error, *models.
 
 	err := productCollection.FindOneAndUpdate(context.TODO(), query, update).Err()
 	if err != nil {
-		return err, data
+		return data, err
 	}
 
 	product, err := GetProduct(id)
-	return err, product
+	return product, err
 }
 
 func DeleteProduct(c *fiber.Ctx) error {
