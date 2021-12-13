@@ -30,9 +30,10 @@ func CreateCart(c *fiber.Ctx) error {
 }
 
 func GetCart(c *fiber.Ctx) error {
-	paramId := c.Params("id")
-	id, err := primitive.ObjectIDFromHex(paramId)
-	cart, err := services.GetCart(id)
+	phone := utils.GetPhoneFromJWT(c)
+	user, err := services.GetUserByPhone(phone)
+	userID, _ := primitive.ObjectIDFromHex(*user.ID)
+	cart, err := services.GetCart(userID)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
