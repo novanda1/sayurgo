@@ -18,9 +18,22 @@ func Auth(body *models.User) (otp *models.Otp, err error) {
 	return
 }
 
-func AuthVerif(phone *string, otpkey *string) bool {
-	verified := VerifyOtp(phone, otpkey)
-	return verified
+func AuthVerification(phone *string, otpkey *string) (verified bool, user *models.User) {
+	verified = VerifyOtp(phone, otpkey)
+	userData := new(models.User)
+
+	if verified {
+		user, err := GetUserByPhone(*phone)
+		if err != nil {
+			userData := new(models.User)
+			userData.Phone = phone
+			user, err = CreateUser(*userData)
+			return true, user
+		}
+		return true, user
+	}
+
+	return false, userData
 }
 
 func SignToken(user *models.User) (string, error) {
