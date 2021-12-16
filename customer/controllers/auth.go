@@ -11,6 +11,13 @@ type verifParams struct {
 	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
+// Auth func request Authorization that return OTP code.
+// @Description Request Authorization that return OTP code.
+// @Summary get OTP code
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Router /api/login [post]
 func Auth(c *fiber.Ctx) error {
 	body := new(models.User)
 	err := c.BodyParser(&body)
@@ -31,6 +38,14 @@ func Auth(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"otp": otp, "error": err.Error()})
 }
 
+// Auth func verif Authorization that return JWT code.
+// @Description verif Authorization that return JWT code.
+// @Summary get JWT code
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.User
+// @Router /api/verif [post]
 func AuthVerif(c *fiber.Ctx) error {
 	body := new(verifParams)
 	err := c.BodyParser(&body)

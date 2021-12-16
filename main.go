@@ -3,11 +3,13 @@ package main
 import (
 	"log"
 
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/helmet/v2"
 	adminRoutes "github.com/novanda1/sayurgo/admin/routes"
 	"github.com/novanda1/sayurgo/config"
 	"github.com/novanda1/sayurgo/customer/routes"
+	_ "github.com/novanda1/sayurgo/docs"
 
 	"github.com/joho/godotenv"
 
@@ -43,9 +45,21 @@ func setupAdminRoutes(app *fiber.App) {
 	})))
 }
 
+// @title SayurGO API
+// @version 0.0.1
+// @description Toying with Swagger
+// @host localhost:3000
+// @BasePath /
 func main() {
 	app := fiber.New()
 	app.Use(helmet.New())
+
+	app.Get("/swagger", swagger.Handler)              // default
+	app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
+		URL:          "doc.json",
+		DeepLinking:  false,
+		DocExpansion: "none",
+	}))
 
 	err := godotenv.Load()
 	if err != nil {

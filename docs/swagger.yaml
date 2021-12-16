@@ -1,0 +1,79 @@
+basePath: /
+definitions:
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+      updatedAt:
+        type: string
+      userAddress:
+        items:
+          $ref: '#/definitions/models.UserAddress'
+        type: array
+    required:
+    - phone
+    type: object
+  models.UserAddress:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      createdAt:
+        type: string
+      detai:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+      postalCode:
+        type: string
+      recipient:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: Toying with Swagger
+  title: SayurGO API
+  version: 0.0.1
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Request Authorization that return OTP code.
+      produces:
+      - application/json
+      summary: get OTP code
+      tags:
+      - Auth
+  /api/verif:
+    post:
+      consumes:
+      - application/json
+      description: verif Authorization that return JWT code.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: get JWT code
+      tags:
+      - Auth
+swagger: "2.0"

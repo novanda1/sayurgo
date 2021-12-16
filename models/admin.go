@@ -7,6 +7,7 @@ import (
 	sharedTypes "github.com/novanda1/sayurgo/shared-types"
 )
 
+// admin struct to describe admin object
 type Admin struct {
 	ID          *string   `json:"id,omitempty" bson:"_id,omitempty"`
 	DisplayName *string   `json:"displayName,omitempty" validate:"required"`
