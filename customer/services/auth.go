@@ -14,6 +14,11 @@ func Auth(body *models.Otp) (otp *models.Otp, err error) {
 	body.Otp = &otpkey
 
 	otp, err = SaveOtp(*body)
+	if err != nil {
+		return
+	}
+
+	otp, err = GetOtpByPhone(body.Phone)
 
 	return
 }
