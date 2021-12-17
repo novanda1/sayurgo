@@ -33,6 +33,8 @@ func GetOtpByPhone(phone *string) (otp *models.Otp, err error) {
 func GetOtpByIDAfterInsert(otpID interface{}) (otp *models.Otp, err error) {
 	otpCollection := config.MI.DB.Collection("otps")
 	query := bson.M{"_id": otpID}
+
+	otp = new(models.Otp)
 	err = otpCollection.FindOne(context.Background(), query).Decode(otp)
 
 	return
