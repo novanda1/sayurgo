@@ -8,6 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Create a brand new product.
+// @Description Create a brand new product.
+// @Summary Create Product
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Param body body models.Product false "Product"
+// @Router /products/{id} [get]
 func AdminCreateProduct(c *fiber.Ctx) error {
 	body := new(models.Product)
 	err := c.BodyParser(&body)

@@ -7,6 +7,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Get all product returned array of products.
+// @Description Get all product returned array of products.
+// @Summary Get All Products
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Router /products [get]
 func GetProducts(c *fiber.Ctx) error {
 	products, err := services.AllProducts()
 

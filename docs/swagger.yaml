@@ -21,6 +21,41 @@ definitions:
       user:
         $ref: '#/definitions/models.User'
     type: object
+  models.Product:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+      createdAt:
+        type: string
+      discountPrice:
+        type: integer
+      id:
+        type: string
+      imageUrl:
+        type: string
+      information:
+        type: string
+      nutrition:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+      unitType:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - categories
+    - imageUrl
+    - information
+    - nutrition
+    - price
+    - title
+    - unitType
+    type: object
   models.User:
     properties:
       createdAt:
@@ -80,7 +115,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: verif Authorization that return JWT code.
+      description: Verify OTP code.
       parameters:
       - description: Your Phone Number
         in: body
@@ -120,6 +155,46 @@ paths:
       summary: Request OTP code
       tags:
       - Auth
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get all product returned array of products.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+      summary: Get All Products
+      tags:
+      - Product
+  /products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get product returned products object.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+      summary: Get Product
+      tags:
+      - Product
 securityDefinitions:
   ApiKeyAuth:
     in: header
