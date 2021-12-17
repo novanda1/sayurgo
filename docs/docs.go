@@ -43,7 +43,7 @@ var doc = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "get JWT code",
+                "summary": "Verify OTP code and get JWT code",
                 "parameters": [
                     {
                         "description": "Your Phone Number",
@@ -59,7 +59,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/controllers.verifOtpResponse"
                         }
                     }
                 }
@@ -77,7 +77,7 @@ var doc = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "get OTP code",
+                "summary": "Request OTP code",
                 "parameters": [
                     {
                         "description": "Your Phone Number",
@@ -117,6 +117,20 @@ var doc = `{
                 },
                 "phone": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.verifOtpResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
                 }
             }
         },

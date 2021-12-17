@@ -12,6 +12,15 @@ definitions:
       phone:
         type: string
     type: object
+  controllers.verifOtpResponse:
+    properties:
+      success:
+        type: boolean
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   models.User:
     properties:
       createdAt:
@@ -85,8 +94,8 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
-      summary: get JWT code
+            $ref: '#/definitions/controllers.verifOtpResponse'
+      summary: Verify OTP code and get JWT code
       tags:
       - Auth
   /auth/login:
@@ -108,7 +117,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/controllers.verifOtpParams'
-      summary: get OTP code
+      summary: Request OTP code
       tags:
       - Auth
 securityDefinitions:
