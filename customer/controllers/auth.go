@@ -17,9 +17,11 @@ type verifParams struct {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Router /api/login [post]
+// @Param phone body string true "Your Phone Number"
+// @Success 200 {string} otp
+// @Router /auth/login [post]
 func Auth(c *fiber.Ctx) error {
-	body := new(models.User)
+	body := new(models.Otp)
 	err := c.BodyParser(&body)
 
 	if err != nil {
@@ -29,12 +31,13 @@ func Auth(c *fiber.Ctx) error {
 		})
 	}
 
-	errors := body.AuthDtoValidate(*body)
+	errors := body.Validate(*body)
 	if errors != nil {
 		return c.JSON(errors)
 	}
 
 	otp, err := services.Auth(body)
+
 	return c.JSON(fiber.Map{"otp": otp, "error": err.Error()})
 }
 

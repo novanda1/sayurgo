@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/novanda1/sayurgo/config"
@@ -9,26 +10,24 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func SaveOtp(phone *string, otpkey *string) (otp *models.Otp, err error) {
-	_, err = GetOtpByPhone(phone)
-	if err == nil {
-		otp, err = ModifyOtpKey(phone, otpkey)
+func SaveOtp(body models.Otp) (otp *models.Otp, err error) {
+	otp, err = GetOtpByPhone(body.Phone)
+
+	if err != nil {
+		body.Exp = time.Now()
+		otp, err = CreateOtp(body)
 		return
 	}
 
-	otp = new(models.Otp)
-	otp.Otp = otpkey
-	otp.Phone = phone
-	otp.Exp = time.Now().Local().Add(60 * time.Second)
+	otp, err = ModifyOtpKey(body)
 
-	otp, err = CreateOtp(otp, phone)
 	return
 }
 
 func GetOtpByPhone(phone *string) (otp *models.Otp, err error) {
 	otpCollection := config.MI.DB.Collection("otps")
 	query := bson.M{"phone": phone}
-	err = otpCollection.FindOne(context.Background(), query).Decode(otp)
+	err = otpCollection.FindOne(context.Background(), query).Decode(&otp)
 	return
 }
 
@@ -36,12 +35,14 @@ func GetOtpByIDAfterInsert(otpID interface{}) (otp *models.Otp, err error) {
 	otpCollection := config.MI.DB.Collection("otps")
 	query := bson.M{"_id": otpID}
 	err = otpCollection.FindOne(context.Background(), query).Decode(otp)
+
 	return
 }
 
-func CreateOtp(otpParams *models.Otp, phone *string) (otp *models.Otp, err error) {
+func CreateOtp(incomingOtp models.Otp) (otp *models.Otp, err error) {
 	otpCollection := config.MI.DB.Collection("otps")
-	result, err := otpCollection.InsertOne(context.Background(), otp)
+	result, err := otpCollection.InsertOne(context.TODO(), incomingOtp)
+
 	if err != nil {
 		return
 	}
@@ -50,15 +51,16 @@ func CreateOtp(otpParams *models.Otp, phone *string) (otp *models.Otp, err error
 	return
 }
 
-func ModifyOtpKey(phone *string, newOtp *string) (otp *models.Otp, err error) {
+func ModifyOtpKey(incomingOtp models.Otp) (otp *models.Otp, err error) {
+	fmt.Println("in mod")
 	otpCollection := config.MI.DB.Collection("otps")
-	otp, err = GetOtpByPhone(phone)
+	otp, err = GetOtpByPhone(incomingOtp.Phone)
 	if err != nil {
 		return
 	}
 
-	query := bson.M{"phone": phone}
-	update := bson.M{"$set": bson.M{"otp": newOtp}}
+	query := bson.M{"phone": incomingOtp.Phone}
+	update := bson.M{"$set": bson.M{"otp": incomingOtp.Otp}}
 	err = otpCollection.FindOneAndUpdate(context.Background(), query, update).Decode(otp)
 
 	return

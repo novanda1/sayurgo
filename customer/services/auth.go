@@ -12,9 +12,13 @@ import (
 var secret = `12345678901234567890`
 var hotp = &otp.TOTP{Secret: secret, Length: 6, IsBase32Secret: true, Period: 60}
 
-func Auth(body *models.User) (otp *models.Otp, err error) {
+func Auth(body *models.Otp) (otp *models.Otp, err error) {
 	otpkey := hotp.Get()
-	otp, err = SaveOtp(body.Phone, &otpkey)
+
+	body.Otp = &otpkey
+
+	otp, err = SaveOtp(*body)
+
 	return
 }
 
