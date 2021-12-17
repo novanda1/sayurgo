@@ -44,14 +44,22 @@ var doc = `{
                     "Auth"
                 ],
                 "summary": "get JWT code",
+                "parameters": [
+                    {
+                        "description": "Your Phone Number",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpParams"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.User"
-                            }
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 }
@@ -77,7 +85,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.requestOtpParams"
                         }
                     }
                 ],
@@ -85,7 +93,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.verifOtpParams"
                         }
                     }
                 }
@@ -93,6 +101,25 @@ var doc = `{
         }
     },
     "definitions": {
+        "controllers.requestOtpParams": {
+            "type": "object",
+            "properties": {
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.verifOtpParams": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "required": [

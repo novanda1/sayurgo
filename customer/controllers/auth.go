@@ -6,19 +6,23 @@ import (
 	"github.com/novanda1/sayurgo/models"
 )
 
-type verifParams struct {
+type verifOtpParams struct {
 	Otp   *string `json:"otp,omitempty" bson:"otp,omitempty"`
+	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
+}
+
+type requestOtpParams struct {
 	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
 // Auth func request Authorization that return OTP code.
 // @Description Request Authorization that return OTP code.
-// @Summary get OTP code
+// @Summary Request OTP code
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param phone body string true "Your Phone Number"
-// @Success 200 {string} otp
+// @Param phone body requestOtpParams true "Your Phone Number"
+// @Success 200 {object} verifOtpParams
 // @Router /auth/login [post]
 func Auth(c *fiber.Ctx) error {
 	body := new(models.Otp)
@@ -47,14 +51,15 @@ func Auth(c *fiber.Ctx) error {
 
 // Auth func verif Authorization that return JWT code.
 // @Description verif Authorization that return JWT code.
-// @Summary get JWT code
+// @Summary Verify OTP code and get JWT code
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.User
+// @Param body body verifOtpParams true "Your Phone Number"
+// @Success 200 {object} models.User
 // @Router /api/verif [post]
 func AuthVerif(c *fiber.Ctx) error {
-	body := new(verifParams)
+	body := new(verifOtpParams)
 	err := c.BodyParser(&body)
 
 	if err != nil {

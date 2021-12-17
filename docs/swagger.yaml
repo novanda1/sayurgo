@@ -1,5 +1,17 @@
 basePath: /api
 definitions:
+  controllers.requestOtpParams:
+    properties:
+      phone:
+        type: string
+    type: object
+  controllers.verifOtpParams:
+    properties:
+      otp:
+        type: string
+      phone:
+        type: string
+    type: object
   models.User:
     properties:
       createdAt:
@@ -60,15 +72,20 @@ paths:
       consumes:
       - application/json
       description: verif Authorization that return JWT code.
+      parameters:
+      - description: Your Phone Number
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.verifOtpParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.User'
-            type: array
+            $ref: '#/definitions/models.User'
       summary: get JWT code
       tags:
       - Auth
@@ -83,14 +100,14 @@ paths:
         name: phone
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/controllers.requestOtpParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/controllers.verifOtpParams'
       summary: get OTP code
       tags:
       - Auth
