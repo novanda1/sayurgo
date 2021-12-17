@@ -34,6 +34,15 @@ func GetProducts(c *fiber.Ctx) error {
 	})
 }
 
+// Get product returned products object.
+// @Description Get product returned products object.
+// @Summary Get Product
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Param id path string true "Product ID"
+// @Router /products/{id} [get]
 func GetProduct(c *fiber.Ctx) error {
 	paramId := c.Params("id")
 
