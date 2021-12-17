@@ -51,6 +51,38 @@ definitions:
     - productID
     - totalProduct
     type: object
+  models.Order:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      orderStatus:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.OrderProduct'
+        type: array
+      totalPrice:
+        type: integer
+      updatedAt:
+        type: string
+      userid:
+        type: string
+    type: object
+  models.OrderProduct:
+    properties:
+      atPrice:
+        type: integer
+      productID:
+        type: string
+      totalProduct:
+        type: integer
+    required:
+    - atPrice
+    - productID
+    - totalProduct
+    type: object
   models.Product:
     properties:
       categories:
@@ -148,6 +180,30 @@ info:
   title: SayurGO API
   version: 0.0.1
 paths:
+  /admin/order/:
+    put:
+      consumes:
+      - application/json
+      description: 'Admin-Only: Change OrderStatus on User-Order'
+      parameters:
+      - description: Order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+      summary: 'Admin-Only: Change Order Status'
+      tags:
+      - Order
   /admin/products:
     post:
       consumes:
@@ -352,7 +408,7 @@ paths:
         type: string
       - description: Product Data
         in: body
-        name: CartProduct
+        name: amount
         required: true
         schema:
           $ref: '#/definitions/models.UpdateAmountCartProductParam'
@@ -368,6 +424,46 @@ paths:
       summary: Change Product Amount in specific product-cart
       tags:
       - Cart
+  /api/order/:
+    get:
+      consumes:
+      - application/json
+      description: Get order data from userid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+      summary: Get Order
+      tags:
+      - Order
+    post:
+      consumes:
+      - application/json
+      description: Create an Order from Cart and delete all cart-product
+      parameters:
+      - description: Order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+      summary: Create Order
+      tags:
+      - Order
   /api/products:
     get:
       consumes:

@@ -8,6 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Create an Order from Cart and delete all cart-product
+// @Description Create an Order from Cart and delete all cart-product
+// @Summary Create Order
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Order
+// @Param order body models.Order true "Order"
+// @Router /api/order/ [post]
 func CreateOrder(c *fiber.Ctx) error {
 	body := &models.Order{}
 	err := c.BodyParser(body)
@@ -60,6 +69,14 @@ func CreateOrder(c *fiber.Ctx) error {
 	})
 }
 
+// Get order data from userid
+// @Description Get order data from userid
+// @Summary Get Order
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Order
+// @Router /api/order/ [get]
 func GetOrders(c *fiber.Ctx) error {
 	useridString := utils.GetUseridFromJWT(c)
 	userID, err := primitive.ObjectIDFromHex(useridString)

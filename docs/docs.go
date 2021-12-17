@@ -31,6 +31,43 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/order/": {
+            "put": {
+                "description": "Admin-Only: Change OrderStatus on User-Order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Admin-Only: Change Order Status",
+                "parameters": [
+                    {
+                        "description": "Order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/admin/products": {
             "post": {
                 "description": "Create a brand new product.",
@@ -271,7 +308,7 @@ var doc = `{
                     },
                     {
                         "description": "Product Data",
-                        "name": "CartProduct",
+                        "name": "amount",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -361,6 +398,67 @@ var doc = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.Cart"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/order/": {
+            "get": {
+                "description": "Get order data from userid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get Order",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an Order from Cart and delete all cart-product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Create Order",
+                "parameters": [
+                    {
+                        "description": "Order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
                             }
                         }
                     }
@@ -501,6 +599,54 @@ var doc = `{
             "properties": {
                 "id": {
                     "type": "string"
+                },
+                "productID": {
+                    "type": "string"
+                },
+                "totalProduct": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Order": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "orderStatus": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderProduct"
+                    }
+                },
+                "totalPrice": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OrderProduct": {
+            "type": "object",
+            "required": [
+                "atPrice",
+                "productID",
+                "totalProduct"
+            ],
+            "properties": {
+                "atPrice": {
+                    "type": "integer"
                 },
                 "productID": {
                     "type": "string"

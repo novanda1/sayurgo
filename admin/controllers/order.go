@@ -7,6 +7,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Admin-Only: Change OrderStatus on User-Order
+// @Description Admin-Only: Change OrderStatus on User-Order
+// @Summary Admin-Only: Change Order Status
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Order
+// @Param order body models.Order true "Order"
+// @Router /admin/order/ [put]
 func ChangeOrderStatus(c *fiber.Ctx) error {
 	body := new(models.Order)
 	err := c.BodyParser(body)
