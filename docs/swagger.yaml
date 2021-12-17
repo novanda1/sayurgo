@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api
 definitions:
   models.User:
     properties:
@@ -44,21 +44,17 @@ definitions:
     type: object
 host: localhost:3000
 info:
-  contact: {}
-  description: Toying with Swagger
+  contact:
+    email: novandaahsan1@gmail.com
+    name: API Support
+    url: https://github.com/novanda1
+  description: The Sayurmax REST API built with GO
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: SayurGO API
   version: 0.0.1
 paths:
-  /api/login:
-    post:
-      consumes:
-      - application/json
-      description: Request Authorization that return OTP code.
-      produces:
-      - application/json
-      summary: get OTP code
-      tags:
-      - Auth
   /api/verif:
     post:
       consumes:
@@ -76,4 +72,33 @@ paths:
       summary: get JWT code
       tags:
       - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Request Authorization that return OTP code.
+      parameters:
+      - description: Your Phone Number
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: get OTP code
+      tags:
+      - Auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format

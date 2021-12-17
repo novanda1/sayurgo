@@ -47,9 +47,24 @@ func setupAdminRoutes(app *fiber.App) {
 
 // @title SayurGO API
 // @version 0.0.1
-// @description Toying with Swagger
+// @description The Sayurmax REST API built with GO
+
+// @contact.name API Support
+// @contact.url https://github.com/novanda1
+// @contact.email novandaahsan1@gmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
 // @host localhost:3000
-// @BasePath /
+// @BasePath /api
+// @query.collection.format multi
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
+// @x-extension-openapi {"example": "value on a json format"}
 func main() {
 	app := fiber.New()
 	app.Use(helmet.New())
