@@ -31,9 +31,9 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/verif": {
+        "/admin/products": {
             "post": {
-                "description": "Verify OTP code.",
+                "description": "Create a brand new product.",
                 "consumes": [
                     "application/json"
                 ],
@@ -41,17 +41,16 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "Product"
                 ],
-                "summary": "Verify OTP code and get JWT code",
+                "summary": "Admin: Create Product",
                 "parameters": [
                     {
-                        "description": "Your Phone Number",
+                        "description": "Product",
                         "name": "body",
                         "in": "body",
-                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpParams"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -59,13 +58,79 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
                         }
                     }
                 }
             }
         },
-        "/auth/login": {
+        "/admin/products/{id}": {
+            "put": {
+                "description": "Update some data in specific product.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Admin: Update Product",
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete specific product.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Admin: Delete Product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ]
+            }
+        },
+        "/api/auth/login": {
             "post": {
                 "description": "Request Authorization that return OTP code.",
                 "consumes": [
@@ -99,7 +164,41 @@ var doc = `{
                 }
             }
         },
-        "/products": {
+        "/api/auth/verif": {
+            "post": {
+                "description": "Verify OTP code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify OTP code and get JWT code",
+                "parameters": [
+                    {
+                        "description": "Your Phone Number",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products": {
             "get": {
                 "description": "Get all product returned array of products.",
                 "consumes": [
@@ -125,7 +224,7 @@ var doc = `{
                 }
             }
         },
-        "/products/{id}": {
+        "/api/products/{id}": {
             "get": {
                 "description": "Get product returned products object.",
                 "consumes": [
@@ -335,7 +434,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "0.0.1",
 	Host:        "localhost:3000",
-	BasePath:    "/api",
+	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "SayurGO API",
 	Description: "The Sayurmax REST API built with GO",

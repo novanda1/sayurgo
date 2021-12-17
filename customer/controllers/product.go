@@ -14,7 +14,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Product
-// @Router /products [get]
+// @Router /api/products [get]
 func GetProducts(c *fiber.Ctx) error {
 	products, err := services.AllProducts()
 
@@ -42,7 +42,7 @@ func GetProducts(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {array} models.Product
 // @Param id path string true "Product ID"
-// @Router /products/{id} [get]
+// @Router /api/products/{id} [get]
 func GetProduct(c *fiber.Ctx) error {
 	paramId := c.Params("id")
 

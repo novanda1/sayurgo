@@ -8,6 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Create a brand new product.
+// @Description Create a brand new product.
+// @Summary Admin: Create Product
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Param body body models.Product false "Product"
+// @Router /admin/products [post]
 func AdminCreateProduct(c *fiber.Ctx) error {
 	body := new(models.Product)
 	err := c.BodyParser(&body)
@@ -42,6 +51,16 @@ func AdminCreateProduct(c *fiber.Ctx) error {
 	})
 }
 
+// Update some data in specific product.
+// @Description Update some data in specific product.
+// @Summary Admin: Update Product
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Param body body models.Product false "Product"
+// @Param id path int false "Product ID"
+// @Router /admin/products/{id} [put]
 func AdminUpdateProduct(c *fiber.Ctx) error {
 	paramID := c.Params("id")
 
@@ -88,6 +107,14 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 	})
 }
 
+// Delete specific product.
+// @Description Delete specific product.
+// @Summary Admin: Delete Product
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path int false "Product ID"
+// @Router /admin/products/{id} [delete]
 func AdminDeleteProduct(c *fiber.Ctx) error {
 	err := services.DeleteProduct(c)
 

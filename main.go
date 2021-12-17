@@ -57,7 +57,6 @@ func setupAdminRoutes(app *fiber.App) {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:3000
-// @BasePath /api
 // @query.collection.format multi
 
 // @securityDefinitions.apikey ApiKeyAuth
