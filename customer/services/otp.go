@@ -13,7 +13,7 @@ func SaveOtp(body models.Otp) (otp *models.Otp, err error) {
 	otp, err = GetOtpByPhone(body.Phone)
 
 	if err != nil {
-		body.Exp = time.Now()
+		body.Exp = time.Now().Add(30 * time.Second)
 		otp, err = CreateOtp(body)
 		return
 	}
@@ -79,8 +79,11 @@ func VerifyOtp(phone string, otpkey string) (verified bool) {
 		return
 	}
 
-	verified = otpkey == *otp.Otp
-	if verified {
+	now := time.Now()
+	pass := now.After(otp.Exp)    // check wheter token is expired
+	verified = otpkey == *otp.Otp // check wether token is same
+
+	if verified && !pass {
 		verified = true
 		DeleteOtp(&phone)
 		return
