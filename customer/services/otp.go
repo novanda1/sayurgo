@@ -84,7 +84,6 @@ func VerifyOtp(phone string, otpkey string) (verified bool) {
 	verified = otpkey == *otp.Otp // check wether token is same
 
 	if verified && !pass {
-		verified = true
 		DeleteOtp(&phone)
 		return
 	} else {
