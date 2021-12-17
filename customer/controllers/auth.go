@@ -39,10 +39,10 @@ func Auth(c *fiber.Ctx) error {
 	otp, err := services.Auth(body)
 
 	if err != nil {
-		return c.JSON(fiber.Map{"otp": otp, "success": false, "error": err.Error()})
+		return c.JSON(fiber.Map{"otp": nil, "success": false, "error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"otp": otp, "success": true})
+	return c.JSON(fiber.Map{"otp": otp.Otp, "success": true})
 }
 
 // Auth func verif Authorization that return JWT code.
