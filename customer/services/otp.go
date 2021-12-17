@@ -71,15 +71,16 @@ func DeleteOtp(phone *string) (err error) {
 	return
 }
 
-func VerifyOtp(phone *string, otpkey *string) (verified bool) {
-	verified = false
-	otp, err := GetOtpByPhone(phone)
+func VerifyOtp(phone string, otpkey string) (verified bool) {
+	otp, err := GetOtpByPhone(&phone)
 	if err != nil {
 		return
-	} else if otp.Otp == otpkey {
-		verified = true
-		DeleteOtp(phone)
+	}
 
+	verified = otpkey == *otp.Otp
+	if verified {
+		verified = true
+		DeleteOtp(&phone)
 		return
 	} else {
 		return

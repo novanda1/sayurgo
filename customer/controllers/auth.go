@@ -69,9 +69,10 @@ func AuthVerif(c *fiber.Ctx) error {
 		})
 	}
 
-	verified, user := services.AuthVerification(body.Phone, body.Otp)
+	verified, user, token := services.AuthVerification(body.Phone, body.Otp)
 	return c.JSON(fiber.Map{
 		"success": verified,
 		"user":    user,
+		"token":   token,
 	})
 }
