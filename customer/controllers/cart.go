@@ -8,6 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Create an Empty cart for user
+// @Description Create an Empty cart for user
+// @Summary Create Empty Cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Cart
+// @Router /api/carts [post]
 func CreateCart(c *fiber.Ctx) error {
 	body := &models.Cart{}
 	err := c.BodyParser(body)
@@ -35,6 +43,14 @@ func CreateCart(c *fiber.Ctx) error {
 	})
 }
 
+// Get cart data for specific user
+// @Description Get cart data for specific user
+// @Summary Get cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Cart
+// @Router /api/carts [get]
 func GetCart(c *fiber.Ctx) error {
 	phone := utils.GetPhoneFromJWT(c)
 	user, err := services.GetUserByPhone(phone)
@@ -64,6 +80,16 @@ func GetCart(c *fiber.Ctx) error {
 	})
 }
 
+// Add product to user cart
+// @Description Add product to user cart
+// @Summary Add product to cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Cart
+// @Param productid path string true "Product ID"
+// @Param body body models.CartProduct true "Product ID"
+// @Router /api/carts/{productid} [post]
 func AddProductToCart(c *fiber.Ctx) error {
 	cartProduct := &models.CartProduct{}
 	err := c.BodyParser(cartProduct)
@@ -124,6 +150,15 @@ func AddProductToCart(c *fiber.Ctx) error {
 	})
 }
 
+// Delete specific product from user cart
+// @Description Delete specific product from user cart
+// @Summary Delete product from cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Cart
+// @Param productid path string true "Product ID"
+// @Router /api/carts/{productid} [delete]
 func DeleteProductFromCart(c *fiber.Ctx) error {
 	paramId := c.Params("productid")
 	productID, err := primitive.ObjectIDFromHex(paramId)
@@ -170,6 +205,16 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 	})
 }
 
+// Change Product Amount in specific product-cart
+// @Description Change Product Amount in specific product-cart
+// @Summary Change Product Amount in specific product-cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Cart
+// @Param productid path string true "Product ID"
+// @Param amount body models.UpdateAmountCartProductParam true "Product Data"
+// @Router /api/carts/{productid} [put]
 func ChangeTotalProductInCart(c *fiber.Ctx) error {
 	paramId := c.Params("productid")
 	productID, err := primitive.ObjectIDFromHex(paramId)

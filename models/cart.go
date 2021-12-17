@@ -23,6 +23,10 @@ type Cart struct {
 	UpdatedAt  time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
 }
 
+type UpdateAmountCartProductParam struct {
+	TotalProduct *int `json:"totalProduct,omitempty" bson:"totalProduct,omitempty" validate:"required"`
+}
+
 func (c CartProduct) Validate(cartProduct CartProduct) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()
