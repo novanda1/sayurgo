@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/novanda1/sayurgo/config"
@@ -52,7 +51,6 @@ func CreateOtp(incomingOtp models.Otp) (otp *models.Otp, err error) {
 }
 
 func ModifyOtpKey(incomingOtp models.Otp) (otp *models.Otp, err error) {
-	fmt.Println("in mod")
 	otpCollection := config.MI.DB.Collection("otps")
 	otp, err = GetOtpByPhone(incomingOtp.Phone)
 	if err != nil {

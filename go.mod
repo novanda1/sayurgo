@@ -8,7 +8,6 @@ require (
 	github.com/gofiber/helmet/v2 v2.2.5
 	github.com/gofiber/jwt/v3 v3.2.2
 	github.com/golang-jwt/jwt/v4 v4.2.0
-	github.com/hgfischer/go-otp v1.0.0
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.8.0
 )

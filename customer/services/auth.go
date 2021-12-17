@@ -3,18 +3,14 @@ package services
 import (
 	"time"
 
-	"github.com/hgfischer/go-otp"
 	"github.com/novanda1/sayurgo/models"
+	"github.com/novanda1/sayurgo/utils"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var secret = `12345678901234567890`
-var hotp = &otp.TOTP{Secret: secret, Length: 6, IsBase32Secret: true, Period: 60}
-
 func Auth(body *models.Otp) (otp *models.Otp, err error) {
-	otpkey := hotp.Get()
-
+	otpkey := utils.GenerateOTP(6)
 	body.Otp = &otpkey
 
 	otp, err = SaveOtp(*body)
