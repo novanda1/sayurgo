@@ -458,9 +458,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Order'
-            type: array
+            $ref: '#/definitions/models.Order'
       summary: Create Order
       tags:
       - Order

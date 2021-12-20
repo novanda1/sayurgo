@@ -14,7 +14,7 @@ import (
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Order
+// @Success 200 {object} models.Order
 // @Param order body models.Order true "Order"
 // @Router /api/order/ [post]
 func CreateOrder(c *fiber.Ctx) error {
