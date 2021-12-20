@@ -53,9 +53,8 @@ func Auth(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"otp": nil, "success": false, "error": err.Error()})
 	}
 
-	utils.SendOtpCodeToWhatsapp(*body.Phone, *body.Otp)
-
-	return c.JSON(fiber.Map{"otp": otp.Otp, "success": true})
+	utils.SendOtpCodeToWhatsapp(*otp.Phone, *otp.Otp)
+	return c.JSON(fiber.Map{"success": true})
 }
 
 // Auth func verif Authorization that return JWT token.
