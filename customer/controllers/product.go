@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/customer/services"
 	"github.com/novanda1/sayurgo/models"
@@ -17,8 +19,10 @@ import (
 // @Success 200 {array} models.Product
 // @Router /api/products [get]
 func GetProducts(c *fiber.Ctx) error {
-	body := new(models.GetAllProductsParams)
-	err := c.BodyParser(body)
+	options := new(models.GetAllProductsParams)
+
+	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
+	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
@@ -27,13 +31,14 @@ func GetProducts(c *fiber.Ctx) error {
 		})
 	}
 
-	errors := body.Validate(*body)
+	options.Limit = limit
+	options.Page = page
+	errors := options.Validate(*options)
 	if errors != nil {
 		return c.JSON(errors)
 	}
 
-	products, hasNext, err := services.AllProducts(*body)
-
+	products, hasNext, err := services.AllProducts(*options)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
