@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/customer/services"
 	"github.com/novanda1/sayurgo/models"
+	"github.com/novanda1/sayurgo/utils"
 )
 
 type verifOtpParams struct {
@@ -51,6 +52,8 @@ func Auth(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(fiber.Map{"otp": nil, "success": false, "error": err.Error()})
 	}
+
+	utils.SendOtpCodeToWhatsapp(*body.Phone, *body.Otp)
 
 	return c.JSON(fiber.Map{"otp": otp.Otp, "success": true})
 }
