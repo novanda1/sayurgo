@@ -467,6 +467,17 @@ paths:
       consumes:
       - application/json
       description: Get all product returned array of products.
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

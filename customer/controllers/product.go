@@ -16,6 +16,8 @@ import (
 // @Tags Product
 // @Accept json
 // @Produce json
+// @Param limit query int64 true "Limit"
+// @Param page query int64 true "Page"
 // @Success 200 {array} models.Product
 // @Router /api/products [get]
 func GetProducts(c *fiber.Ctx) error {
