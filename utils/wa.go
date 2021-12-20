@@ -27,7 +27,7 @@ func SendOtpCodeToWhatsapp(to string, message string) {
 
 	client := httpClient()
 	payload := WhatsappMessage{
-		To:         "6285155114745",
+		To:         to,
 		InstanceID: os.Getenv("ZUWINDA_INSTANCE"),
 		Content:    "Kode OTP SayurGO anda adalah: " + message,
 	}
