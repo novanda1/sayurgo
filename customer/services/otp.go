@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/novanda1/sayurgo/config"
@@ -69,7 +70,11 @@ func ModifyOtpKey(incomingOtp models.Otp) (otp *models.Otp, err error) {
 func DeleteOtp(phone *string) (err error) {
 	otpCollection := config.MI.DB.Collection("otps")
 	query := bson.M{"phone": phone}
-	err = otpCollection.FindOneAndDelete(context.Background(), query).Err()
+	result := otpCollection.FindOneAndDelete(context.Background(), query)
+	err = result.Err()
+
+	fmt.Println(result)
+
 	return
 }
 
@@ -87,6 +92,8 @@ func VerifyOtp(phone string, otpkey string) (verified bool) {
 		DeleteOtp(&phone)
 		return
 	} else {
+		verified = false
+		DeleteOtp(&phone)
 		return
 	}
 }

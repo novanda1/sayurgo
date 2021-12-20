@@ -16,6 +16,12 @@ type Otp struct {
 	Exp   time.Time          `json:"exp,omitempty"`
 }
 
+type VerifOtpResult struct {
+	Verified *bool   `json:"verified"`
+	User     *User   `json:"user"`
+	Token    *string `json:"token"`
+}
+
 func (c Otp) Validate(otp Otp) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()

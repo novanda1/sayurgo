@@ -23,25 +23,34 @@ func Auth(body *models.Otp) (otp *models.Otp, err error) {
 	return
 }
 
-func AuthVerification(phone *string, otpkey *string) (verified bool, user *models.User, token string) {
-	verified = VerifyOtp(*phone, *otpkey)
-	userData := new(models.User)
+func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResult, fail error) {
+	verified := VerifyOtp(*phone, *otpkey)
+	result.Verified = &verified
 
 	if verified {
 		user, err := GetUserByPhone(*phone)
-		token, err := SignToken(user)
 		if err != nil {
 			userData := new(models.User)
 			userData.Phone = phone
 			user, err = CreateUser(*userData)
-			return true, user, token
+			token, _ := SignToken(user)
+
+			result.User = user
+			result.Token = &token
+
+			err = nil
+
+			return
 		}
 
-		token, err = SignToken(user)
-		return true, user, token
+		token, err := SignToken(user)
+		result.User = user
+		result.Token = &token
+
+		return
 	}
 
-	return false, userData, ""
+	return
 }
 
 func SignToken(user *models.User) (string, error) {
