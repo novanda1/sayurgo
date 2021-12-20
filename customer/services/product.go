@@ -10,23 +10,37 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func AllProducts() ([]models.Product, error) {
+func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, error) {
 	productCollection := config.MI.DB.Collection("products")
 
 	var products []models.Product = make([]models.Product, 0)
 	query := bson.D{{}}
 
-	cursor, err := productCollection.Find(context.TODO(), query)
+	cursor, err := productCollection.Find(
+		context.TODO(),
+		query,
+		options.Find().SetLimit(2),
+		options.Find().SetSkip((opts.Page-1)*opts.Limit),
+	)
 
 	if err != nil {
-		return products, err
+		return products, false, err
 	}
 
 	cursor.All(context.TODO(), &products)
+	cursor.Close(context.Background())
+	remain := cursor.RemainingBatchLength()
+	var hasNext bool = true
 
-	return products, err
+	hasNext = true
+	if remain <= 1 {
+		hasNext = false
+	}
+
+	return products, hasNext, err
 }
 
 func CreateProduct(body models.Product) (*models.Product, error) {

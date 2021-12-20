@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -21,6 +22,11 @@ type Product struct {
 	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
 }
 
+type GetAllProductsParams struct {
+	Limit int64 `json:"limit" validate:"required,numeric"`
+	Page  int64 `json:"page" validate:"required,numeric"`
+}
+
 func (c Product) Validate(product Product) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()
@@ -33,6 +39,25 @@ func (c Product) Validate(product Product) []*sharedTypes.ErrorResponse {
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			errors = append(errors, &element)
+		}
+	}
+	return errors
+}
+
+func (c GetAllProductsParams) Validate(params GetAllProductsParams) []*sharedTypes.ErrorResponse {
+	var errors []*sharedTypes.ErrorResponse
+	validate := validator.New()
+
+	err := validate.Struct(params)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element sharedTypes.ErrorResponse
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, &element)
+
+			fmt.Println(err)
 		}
 	}
 	return errors

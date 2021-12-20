@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/customer/services"
+	"github.com/novanda1/sayurgo/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -16,7 +17,22 @@ import (
 // @Success 200 {array} models.Product
 // @Router /api/products [get]
 func GetProducts(c *fiber.Ctx) error {
-	products, err := services.AllProducts()
+	body := new(models.GetAllProductsParams)
+	err := c.BodyParser(body)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Something went wrong",
+			"error":   err.Error(),
+		})
+	}
+
+	errors := body.Validate(*body)
+	if errors != nil {
+		return c.JSON(errors)
+	}
+
+	products, hasNext, err := services.AllProducts(*body)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -30,6 +46,7 @@ func GetProducts(c *fiber.Ctx) error {
 		"success": true,
 		"data": fiber.Map{
 			"products": products,
+			"hasNext":  hasNext,
 		},
 	})
 }
