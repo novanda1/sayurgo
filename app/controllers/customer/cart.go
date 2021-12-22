@@ -18,7 +18,8 @@ import (
 // @Router /api/carts [post]
 func CreateCart(c *fiber.Ctx) error {
 	body := &models.Cart{}
-	err := c.BodyParser(body)
+	userid := utils.GetUseridFromJWT(c)
+	primitiveUserid, err := primitive.ObjectIDFromHex(userid)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -26,6 +27,7 @@ func CreateCart(c *fiber.Ctx) error {
 		})
 	}
 
+	body.UserID = primitiveUserid
 	cart, err := services.CreateCart(*body)
 
 	if err != nil {
