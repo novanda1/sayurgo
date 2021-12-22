@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/novanda1/sayurgo/app/models"
-	"github.com/novanda1/sayurgo/pkg/config"
+	"github.com/novanda1/sayurgo/platforms/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
-	orderCollection := config.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection("order")
 	order = &models.Order{}
 
 	query := bson.D{{Key: "id", Value: id}}
@@ -21,7 +21,7 @@ func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
 }
 
 func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err error) {
-	orderCollection := config.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection("order")
 	var orders []models.Order = make([]models.Order, 0)
 
 	query := bson.D{{Key: "userid", Value: userID}}
@@ -35,7 +35,7 @@ func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err er
 }
 
 func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.Order, err error) {
-	orderCollection := config.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection("order")
 	order = new(models.Order)
 
 	cart, err := GetCart(userID)
@@ -89,7 +89,7 @@ func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.O
 }
 
 func ChangeOrderStatus(orderID primitive.ObjectID, orderStatus models.OrderStatus) (order *models.Order, err error) {
-	orderCollection := config.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection("order")
 
 	query := bson.M{"_id": orderID}
 	err = orderCollection.FindOne(context.Background(), query).Decode(&order)

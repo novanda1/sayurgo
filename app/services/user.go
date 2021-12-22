@@ -6,14 +6,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/app/models"
-	"github.com/novanda1/sayurgo/pkg/config"
+	"github.com/novanda1/sayurgo/platforms/database"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AllUsers(c *fiber.Ctx) ([]models.User, error) {
-	userCollection := config.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection("users")
 
 	var users []models.User = make([]models.User, 0)
 	query := bson.D{{}}
@@ -29,7 +29,7 @@ func AllUsers(c *fiber.Ctx) ([]models.User, error) {
 }
 
 func CreateUser(data models.User) (*models.User, error) {
-	userCollection := config.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection("users")
 	data.ID = nil
 	data.CreatedAt = time.Now()
 	data.UpdatedAt = time.Now()
@@ -48,7 +48,7 @@ func CreateUser(data models.User) (*models.User, error) {
 }
 
 func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
-	userCollection := config.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection("users")
 	user := &models.User{}
 
 	id, err := primitive.ObjectIDFromHex(paramId)
@@ -64,7 +64,7 @@ func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
 }
 
 func GetUserByPhone(phone string) (*models.User, error) {
-	userCollection := config.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection("users")
 	user := &models.User{}
 
 	query := bson.D{{Key: "phone", Value: phone}}
@@ -74,7 +74,7 @@ func GetUserByPhone(phone string) (*models.User, error) {
 }
 
 func UpdateUser(c *fiber.Ctx) (*models.User, error) {
-	userCollection := config.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection("users")
 	data := new(models.User)
 
 	paramId := c.Params("id")
@@ -124,7 +124,7 @@ func UpdateUser(c *fiber.Ctx) (*models.User, error) {
 }
 
 func GetAdminByPhone(phone string) (admin *models.Admin, err error) {
-	adminCollection := config.MI.DB.Collection("admin")
+	adminCollection := database.MI.DB.Collection("admin")
 	admin = &models.Admin{}
 
 	query := bson.D{{Key: "phone", Value: phone}}
@@ -134,7 +134,7 @@ func GetAdminByPhone(phone string) (admin *models.Admin, err error) {
 }
 
 func CreateAdmin(data models.Admin) (admin *models.Admin, err error) {
-	adminCollection := config.MI.DB.Collection("admin")
+	adminCollection := database.MI.DB.Collection("admin")
 	data.ID = nil
 	data.CreatedAt = time.Now()
 	data.UpdatedAt = time.Now()

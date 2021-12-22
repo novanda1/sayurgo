@@ -1,4 +1,4 @@
-package config
+package database
 
 import (
 	"context"
@@ -12,13 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
-
-type MongoInstance struct {
-	Client *mongo.Client
-	DB     *mongo.Database
-}
-
-var MI MongoInstance
 
 func ConnectDB() {
 	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGO_URI")))

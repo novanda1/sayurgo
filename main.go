@@ -7,9 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/helmet/v2"
 	_ "github.com/novanda1/sayurgo/docs"
-	"github.com/novanda1/sayurgo/pkg/config"
 	adminRoutes "github.com/novanda1/sayurgo/pkg/routes/admin"
 	routes "github.com/novanda1/sayurgo/pkg/routes/customer"
+	"github.com/novanda1/sayurgo/platforms/database"
 
 	"github.com/joho/godotenv"
 
@@ -80,7 +80,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	config.ConnectDB()
+	database.ConnectDB()
 
 	setupAdminRoutes(app)
 	setupRoutes(app)
