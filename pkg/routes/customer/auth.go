@@ -6,6 +6,6 @@ import (
 )
 
 func AuthRoute(route fiber.Router) {
-	route.Post("/login", controllers.Auth)
-	route.Post("/verif", controllers.AuthVerif)
+	route.Post("/request", controllers.Auth)
+	route.Post("/verify", controllers.AuthVerif)
 }

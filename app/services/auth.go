@@ -64,7 +64,7 @@ func SignToken(user *models.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte(os.Getenv("CUSTOMER_TOKEN_SECRET")))
+	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	return t, err
 }

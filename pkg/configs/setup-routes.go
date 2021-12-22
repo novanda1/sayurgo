@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
 	adminRoutes "github.com/novanda1/sayurgo/pkg/routes/admin"
@@ -12,25 +14,22 @@ func SetupRoutes(app *fiber.App) {
 		return c.SendString("Hello, World 👋!")
 	})
 
-	api := app.Group("/api")
+	auth := app.Group("/auth")
+	api := app.Group("/api").Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}))
 
-	routes.AuthRoute(api.Group("/auth"))
+	routes.AuthRoute(auth)
 	routes.ProductRoute(api.Group("/products"))
-	routes.CartRoute(api.Group("/carts").Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte("secret"),
-	})))
-	routes.OrderRoute(api.Group("/order").Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte("secret"),
-	})))
+	routes.CartRoute(api.Group("/carts"))
+	routes.OrderRoute(api.Group("/order"))
 }
 
 func SetupAdminRoutes(app *fiber.App) {
-	admin := app.Group("/admin")
+	admin := app.Group("/admin").Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}))
 
-	adminRoutes.ProductRoute(admin.Group("/products").Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte("adminsecret"),
-	})))
-	adminRoutes.OrderRoute(admin.Group("/orders").Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte("adminsecret"),
-	})))
+	adminRoutes.ProductRoute(admin.Group("/products"))
+	adminRoutes.OrderRoute(admin.Group("/orders"))
 }
