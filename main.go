@@ -6,10 +6,10 @@ import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/helmet/v2"
-	adminRoutes "github.com/novanda1/sayurgo/admin/routes"
-	"github.com/novanda1/sayurgo/config"
-	"github.com/novanda1/sayurgo/customer/routes"
 	_ "github.com/novanda1/sayurgo/docs"
+	"github.com/novanda1/sayurgo/pkg/config"
+	adminRoutes "github.com/novanda1/sayurgo/pkg/routes/admin"
+	routes "github.com/novanda1/sayurgo/pkg/routes/customer"
 
 	"github.com/joho/godotenv"
 
