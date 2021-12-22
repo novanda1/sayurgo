@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/novanda1/sayurgo/app/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -38,5 +39,5 @@ func ConnectDB() {
 		DB:     client.Database(os.Getenv("DATABASE_NAME")),
 	}
 
-	CreateMongoIndex("users", "phone", true)
+	CreateMongoIndex(models.UserCollectionName, "phone", true)
 }
