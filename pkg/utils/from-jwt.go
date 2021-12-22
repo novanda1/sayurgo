@@ -20,3 +20,15 @@ func GetUseridFromJWT(c *fiber.Ctx) (phone string) {
 
 	return phone
 }
+
+func AmIAdmin(c *fiber.Ctx) (isAdmin bool) {
+	isAdmin = false
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	role := claims["role"].(string)
+	if role == "admin" {
+		isAdmin = true
+	}
+
+	return isAdmin
+}

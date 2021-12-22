@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/app/models"
 	"github.com/novanda1/sayurgo/app/services"
+	"github.com/novanda1/sayurgo/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,6 +20,13 @@ import (
 // @Param order body models.Order true "Order"
 // @Router /admin/order/ [put]
 func ChangeOrderStatus(c *fiber.Ctx) error {
+	if !utils.AmIAdmin(c) {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"success": false,
+			"error":   "401",
+		})
+	}
+
 	body := new(models.Order)
 	err := c.BodyParser(body)
 	if err != nil {
@@ -62,8 +70,14 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 // @Success 200 {array} models.Order
 // @Router /api/order/ [get]
 func GetOrders(c *fiber.Ctx) error {
-	options := new(models.GetAllProductsParams)
+	if !utils.AmIAdmin(c) {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"success": false,
+			"error":   "401",
+		})
+	}
 
+	options := new(models.GetAllProductsParams)
 	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
 	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
