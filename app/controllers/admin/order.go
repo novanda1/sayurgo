@@ -1,10 +1,11 @@
 package adminControllers
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/app/models"
 	"github.com/novanda1/sayurgo/app/services"
-	"github.com/novanda1/sayurgo/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -52,8 +53,8 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 	})
 }
 
-// Get order data from userid
-// @Description Get order data from userid
+// Get all of order
+// @Description Get all of order
 // @Summary Get Order
 // @Tags Order
 // @Accept json
@@ -61,25 +62,39 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 // @Success 200 {array} models.Order
 // @Router /api/order/ [get]
 func GetOrders(c *fiber.Ctx) error {
-	useridString := utils.GetUseridFromJWT(c)
-	userID, err := primitive.ObjectIDFromHex(useridString)
+	options := new(models.GetAllProductsParams)
+
+	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
+	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"message": "failed to parse body",
+			"message": "Something went wrong",
+			"error":   err.Error(),
 		})
 	}
 
-	order, err := services.GetOrdersByUserID(userID)
+	options.Limit = limit
+	options.Page = page
+	errors := options.Validate(*options)
+	if errors != nil {
+		return c.JSON(errors)
+	}
+
+	orders, hasNext, err := services.GetAllOrders(models.GetAllOrdersParams(*options))
 	if err != nil {
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"error":   err,
+			"message": "Something went wrong",
+			"error":   err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
-		"data":    order,
+		"data": fiber.Map{
+			"orders":  orders,
+			"hasNext": hasNext,
+		},
 	})
 }

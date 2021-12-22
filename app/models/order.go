@@ -8,6 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type GetAllOrdersParams struct {
+	Limit int64 `json:"limit" validate:"required,numeric"`
+	Page  int64 `json:"page" validate:"required,numeric"`
+}
+
 type OrderStatus string
 
 var (

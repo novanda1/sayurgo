@@ -9,6 +9,7 @@ import (
 	"github.com/novanda1/sayurgo/platform/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
@@ -32,6 +33,36 @@ func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err er
 
 	cursor.All(context.Background(), &orders)
 	return &orders, err
+}
+
+func GetAllOrders(opts models.GetAllOrdersParams) (orders []models.Order, hasNext bool, err error) {
+	orderCollection := database.MI.DB.Collection("order")
+
+	orders = make([]models.Order, 0)
+	query := bson.D{{}}
+
+	cursor, err := orderCollection.Find(
+		context.TODO(),
+		query,
+		options.Find().SetLimit(2),
+		options.Find().SetSkip((opts.Page-1)*opts.Limit),
+	)
+
+	if err != nil {
+		return orders, false, err
+	}
+
+	cursor.All(context.TODO(), &orders)
+	cursor.Close(context.Background())
+	remain := cursor.RemainingBatchLength()
+	hasNext = true
+
+	hasNext = true
+	if remain <= 1 {
+		hasNext = false
+	}
+
+	return orders, hasNext, err
 }
 
 func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.Order, err error) {
