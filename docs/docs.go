@@ -406,7 +406,7 @@ var doc = `{
         },
         "/api/order/": {
             "get": {
-                "description": "Get order data from userid",
+                "description": "Get order data from current userid",
                 "consumes": [
                     "application/json"
                 ],

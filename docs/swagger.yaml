@@ -428,7 +428,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get order data from userid
+      description: Get order data from current userid
       produces:
       - application/json
       responses:
