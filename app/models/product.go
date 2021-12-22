@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -56,8 +55,6 @@ func (c GetAllProductsParams) Validate(params GetAllProductsParams) []*sharedTyp
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			errors = append(errors, &element)
-
-			fmt.Println(err)
 		}
 	}
 	return errors

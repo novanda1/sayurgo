@@ -7,6 +7,21 @@ import (
 	sharedTypes "github.com/novanda1/sayurgo/pkg/shared-types"
 )
 
+type UserRole string
+
+var (
+	Customer UserRole = "customer"
+	Admin    UserRole = "Admin"
+)
+
+func (s UserRole) String() string {
+	switch s {
+	case Admin:
+		return "admin"
+	}
+	return "customer"
+}
+
 type UserAddress struct {
 	ID         *string   `json:"id,omitempty" bson:"_id,omitempty"`
 	Title      *string   `json:"title,omitempty"`

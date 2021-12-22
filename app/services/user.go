@@ -31,6 +31,7 @@ func AllUsers(c *fiber.Ctx) ([]models.User, error) {
 func CreateUser(data models.User) (*models.User, error) {
 	userCollection := database.MI.DB.Collection("users")
 	data.ID = nil
+	data.Role = (*string)(&models.Customer)
 	data.CreatedAt = time.Now()
 	data.UpdatedAt = time.Now()
 
