@@ -1,6 +1,7 @@
 package services
 
 import (
+	"os"
 	"time"
 
 	"github.com/novanda1/sayurgo/app/models"
@@ -62,7 +63,7 @@ func SignToken(user *models.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte("secret"))
+	t, err := token.SignedString([]byte(os.Getenv("CUSTOMER_TOKEN_SECRET")))
 
 	return t, err
 }
@@ -101,7 +102,7 @@ func AdminSignToken(user *models.Admin) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte("adminsecret"))
+	t, err := token.SignedString([]byte(os.Getenv("CUSTOMER_TOKEN_SECRET")))
 
 	return t, err
 }
