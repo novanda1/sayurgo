@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/app/models"
+	"github.com/novanda1/sayurgo/pkg/utils"
 	"github.com/novanda1/sayurgo/platform/database"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -81,39 +82,15 @@ func UpdateProduct(id primitive.ObjectID, data *models.Product) (*models.Product
 	// store the data that need to update
 	var dataToUpdate bson.D
 
-	if data.Title != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "title", Value: data.Title})
-	}
-
-	if data.ImageUrl != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "imageUrl", Value: data.ImageUrl})
-	}
-
-	if data.Price != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "price", Value: data.Price})
-	}
-
-	if data.Categories != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "discountPrice", Value: data.DiscountPrice})
-	}
-
-	if data.Categories != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "categories", Value: data.Categories})
-	}
-
-	if data.UnitType != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "unitType", Value: data.UnitType})
-	}
-
-	if data.Nutrition != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "information", Value: data.Information})
-	}
-
-	if data.Nutrition != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "nutrition", Value: data.Nutrition})
-	}
-
-	dataToUpdate = append(dataToUpdate, bson.E{Key: "updatedAt", Value: time.Now()})
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "title", data.Title)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "imageUrl", data.ImageUrl)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "price", data.Price)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "discountPrice", data.DiscountPrice)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "categories", data.Categories)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "unitType", data.UnitType)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "information", data.Information)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "nutrition", data.Nutrition)
+	dataToUpdate = utils.AppendOrSkip(dataToUpdate, "updatedAt", time.Now())
 
 	update := bson.D{
 		{Key: "$set", Value: dataToUpdate},
