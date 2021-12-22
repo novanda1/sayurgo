@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -39,13 +38,5 @@ func ConnectDB() {
 		DB:     client.Database(os.Getenv("DATABASE_NAME")),
 	}
 
-	userCollection := MI.DB.Collection("users")
-	index := mongo.IndexModel{
-		Keys: bson.M{
-			"phone": 1,
-		},
-	}
-	if _, err := userCollection.Indexes().CreateOne(ctx, index); err != nil {
-		log.Println("Could not create index:", err)
-	}
+	CreateMongoIndex("users", "phone", true)
 }
