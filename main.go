@@ -9,7 +9,7 @@ import (
 	_ "github.com/novanda1/sayurgo/docs"
 	adminRoutes "github.com/novanda1/sayurgo/pkg/routes/admin"
 	routes "github.com/novanda1/sayurgo/pkg/routes/customer"
-	"github.com/novanda1/sayurgo/platforms/database"
+	"github.com/novanda1/sayurgo/platform/database"
 
 	"github.com/joho/godotenv"
 

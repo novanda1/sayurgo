@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/novanda1/sayurgo/app/models"
-	"github.com/novanda1/sayurgo/platforms/database"
+	"github.com/novanda1/sayurgo/platform/database"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
