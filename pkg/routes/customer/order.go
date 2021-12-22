@@ -7,5 +7,4 @@ import (
 
 func OrderRoute(route fiber.Router) {
 	route.Post("", controllers.CreateOrder)
-	route.Get("", controllers.GetOrders)
 }

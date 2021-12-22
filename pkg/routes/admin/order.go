@@ -7,4 +7,5 @@ import (
 
 func OrderRoute(route fiber.Router) {
 	route.Put("/:id", adminControllers.ChangeOrderStatus)
+	route.Get("", adminControllers.GetOrders)
 }
