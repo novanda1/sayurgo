@@ -58,45 +58,7 @@ func SignToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"phone": user.Phone,
 		"id":    user.ID,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	t, err := token.SignedString([]byte(os.Getenv("CUSTOMER_TOKEN_SECRET")))
-
-	return t, err
-}
-
-func AdminAuth(body *models.Admin) (token string, message string, admin *models.Admin) {
-	admin, err := GetAdminByPhone(*body.Phone)
-	if err != nil {
-		admin, err = CreateAdmin(*body)
-
-		if err != nil {
-			return "", "failed createadmin", admin
-		}
-
-		token, _ := AdminSignToken(admin)
-
-		return token, "successfully", admin
-	}
-
-	token, err = AdminSignToken(admin)
-
-	if err != nil {
-		message = "failed to authenticated"
-		return
-	}
-
-	message = "authenticated successfully"
-	return
-}
-
-func AdminSignToken(user *models.Admin) (string, error) {
-	claims := jwt.MapClaims{
-		"phone": user.Phone,
-		"id":    user.ID,
+		"role":  user.Role,
 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}
 

@@ -27,7 +27,6 @@ func SetupRoutes(app *fiber.App) {
 func SetupAdminRoutes(app *fiber.App) {
 	admin := app.Group("/admin")
 
-	adminRoutes.AuthRoutes(admin.Group("/auth"))
 	adminRoutes.ProductRoute(admin.Group("/products").Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("adminsecret"),
 	})))

@@ -25,6 +25,7 @@ type User struct {
 	DisplayName *string        `json:"displayName,omitempty"`
 	Phone       *string        `json:"phone,omitempty" validate:"required"`
 	UserAddress *[]UserAddress `json:"userAddress,omitempty"`
+	Role        *string        `json:"role,omitempty" bson:"role,omitempty"`
 	CreatedAt   time.Time      `json:"createdAt,omitempty"`
 	UpdatedAt   time.Time      `json:"updatedAt,omitempty"`
 }
