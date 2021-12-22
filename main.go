@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/helmet/v2"
 	_ "github.com/novanda1/sayurgo/docs"
@@ -36,13 +35,6 @@ func main() {
 	app := fiber.New()
 	app.Use(helmet.New())
 
-	app.Get("/swagger", swagger.Handler)              // default
-	app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
-		URL:          "doc.json",
-		DeepLinking:  false,
-		DocExpansion: "none",
-	}))
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -50,6 +42,7 @@ func main() {
 
 	database.ConnectDB()
 
+	config.WithSwagger(app)
 	config.SetupAdminRoutes(app)
 	config.SetupRoutes(app)
 
