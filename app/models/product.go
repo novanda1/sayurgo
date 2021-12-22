@@ -7,6 +7,8 @@ import (
 	sharedTypes "github.com/novanda1/sayurgo/pkg/shared-types"
 )
 
+var ProductCollectionName = "products"
+
 type Product struct {
 	ID            *string   `json:"id,omitempty" bson:"_id,omitempty"`
 	Title         *string   `json:"title,omitempty" validate:"required"`

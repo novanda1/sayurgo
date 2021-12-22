@@ -12,7 +12,7 @@ import (
 )
 
 func CreateCart(cart models.Cart) (*models.Cart, error) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 
 	cart.ID = nil
 	cart.CreatedAt = time.Now()
@@ -31,7 +31,7 @@ func CreateCart(cart models.Cart) (*models.Cart, error) {
 }
 
 func GetCart(userID primitive.ObjectID) (*models.Cart, error) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	cart := &models.Cart{}
 
 	query := bson.D{{Key: "userid", Value: userID}}
@@ -41,7 +41,7 @@ func GetCart(userID primitive.ObjectID) (*models.Cart, error) {
 }
 
 func AddProductToCart(userID primitive.ObjectID, cartProduct *models.CartProduct) (cart *models.Cart, message string) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	query := bson.M{"userid": userID}
 
 	cart, err := GetCart(userID)
@@ -77,7 +77,7 @@ func AddProductToCart(userID primitive.ObjectID, cartProduct *models.CartProduct
 }
 
 func IsProductAlreadyExists(productID primitive.ObjectID, userID primitive.ObjectID) bool {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	_, err := GetCart(userID)
 	if err != nil {
 		return false
@@ -96,7 +96,7 @@ func IsProductAlreadyExists(productID primitive.ObjectID, userID primitive.Objec
 }
 
 func DeleteProductFromCart(productID primitive.ObjectID, userID primitive.ObjectID) (message string, success bool) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	isExists := IsProductAlreadyExists(productID, userID)
 	if !isExists {
 		message = "product didn't even exists"
@@ -121,7 +121,7 @@ func DeleteProductFromCart(productID primitive.ObjectID, userID primitive.Object
 }
 
 func ChangeTotalProductInCart(productID primitive.ObjectID, userID primitive.ObjectID, totalProduct int) (message string, success bool, data *models.Cart) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	isExists := IsProductAlreadyExists(productID, userID)
 	if !isExists {
 		message = "product didn't even exists"
@@ -170,7 +170,7 @@ func IsHasProductOnCart(userID primitive.ObjectID) (hasProduct bool, err error) 
 }
 
 func ClearProductsInCart(userID primitive.ObjectID) (cart *models.Cart) {
-	cartCollection := database.MI.DB.Collection("carts")
+	cartCollection := database.MI.DB.Collection(models.CartCollectionName)
 	var cartProduct []models.CartProduct = make([]models.CartProduct, 0)
 
 	query := bson.D{{Key: "userid", Value: userID}}

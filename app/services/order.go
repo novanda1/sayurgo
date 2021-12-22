@@ -13,7 +13,7 @@ import (
 )
 
 func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
-	orderCollection := database.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 	order = &models.Order{}
 
 	query := bson.D{{Key: "id", Value: id}}
@@ -22,7 +22,7 @@ func GetOrderByID(id primitive.ObjectID) (order *models.Order, err error) {
 }
 
 func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err error) {
-	orderCollection := database.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 	var orders []models.Order = make([]models.Order, 0)
 
 	query := bson.D{{Key: "userid", Value: userID}}
@@ -36,7 +36,7 @@ func GetOrdersByUserID(userID primitive.ObjectID) (order *[]models.Order, err er
 }
 
 func GetAllOrders(opts models.GetAllOrdersParams) (orders []models.Order, hasNext bool, err error) {
-	orderCollection := database.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 
 	orders = make([]models.Order, 0)
 	query := bson.D{{}}
@@ -66,7 +66,7 @@ func GetAllOrders(opts models.GetAllOrdersParams) (orders []models.Order, hasNex
 }
 
 func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.Order, err error) {
-	orderCollection := database.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 	order = new(models.Order)
 
 	cart, err := GetCart(userID)
@@ -120,7 +120,7 @@ func CreateOrder(body *models.Order, userID primitive.ObjectID) (order *models.O
 }
 
 func ChangeOrderStatus(orderID primitive.ObjectID, orderStatus models.OrderStatus) (order *models.Order, err error) {
-	orderCollection := database.MI.DB.Collection("order")
+	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 
 	query := bson.M{"_id": orderID}
 	err = orderCollection.FindOne(context.Background(), query).Decode(&order)

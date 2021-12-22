@@ -8,6 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var CartCollectionName = "carts"
+
 type CartProduct struct {
 	ID           *string            `json:"id,omitempty" bson:"_id,omitempty"`
 	TotalProduct *int               `json:"totalProduct,omitempty" bson:"totalProduct,omitempty" validate:"required"`

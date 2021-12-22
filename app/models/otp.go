@@ -8,6 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var OtpCollectionName = "otps"
+
 // would be much better if we use redis.
 type Otp struct {
 	ID    primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`

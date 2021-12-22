@@ -13,7 +13,7 @@ import (
 )
 
 func AllUsers(c *fiber.Ctx) ([]models.User, error) {
-	userCollection := database.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 
 	var users []models.User = make([]models.User, 0)
 	query := bson.D{{}}
@@ -29,7 +29,7 @@ func AllUsers(c *fiber.Ctx) ([]models.User, error) {
 }
 
 func CreateUser(data models.User) (*models.User, error) {
-	userCollection := database.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 	data.ID = nil
 	data.Role = (*string)(&models.Customer)
 	data.CreatedAt = time.Now()
@@ -49,7 +49,7 @@ func CreateUser(data models.User) (*models.User, error) {
 }
 
 func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
-	userCollection := database.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 	user := &models.User{}
 
 	id, err := primitive.ObjectIDFromHex(paramId)
@@ -65,7 +65,7 @@ func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
 }
 
 func GetUserByPhone(phone string) (*models.User, error) {
-	userCollection := database.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 	user := &models.User{}
 
 	query := bson.D{{Key: "phone", Value: phone}}
@@ -75,7 +75,7 @@ func GetUserByPhone(phone string) (*models.User, error) {
 }
 
 func UpdateUser(c *fiber.Ctx) (*models.User, error) {
-	userCollection := database.MI.DB.Collection("users")
+	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 	data := new(models.User)
 
 	paramId := c.Params("id")

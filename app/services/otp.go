@@ -24,14 +24,14 @@ func SaveOtp(body models.Otp) (otp *models.Otp, err error) {
 }
 
 func GetOtpByPhone(phone *string) (otp *models.Otp, err error) {
-	otpCollection := database.MI.DB.Collection("otps")
+	otpCollection := database.MI.DB.Collection(models.OtpCollectionName)
 	query := bson.M{"phone": phone}
 	err = otpCollection.FindOne(context.Background(), query).Decode(&otp)
 	return
 }
 
 func GetOtpByIDAfterInsert(otpID interface{}) (otp *models.Otp, err error) {
-	otpCollection := database.MI.DB.Collection("otps")
+	otpCollection := database.MI.DB.Collection(models.OtpCollectionName)
 	query := bson.M{"_id": otpID}
 
 	otp = new(models.Otp)
@@ -41,7 +41,7 @@ func GetOtpByIDAfterInsert(otpID interface{}) (otp *models.Otp, err error) {
 }
 
 func CreateOtp(incomingOtp models.Otp) (otp *models.Otp, err error) {
-	otpCollection := database.MI.DB.Collection("otps")
+	otpCollection := database.MI.DB.Collection(models.OtpCollectionName)
 	result, err := otpCollection.InsertOne(context.TODO(), incomingOtp)
 
 	if err != nil {
@@ -53,7 +53,7 @@ func CreateOtp(incomingOtp models.Otp) (otp *models.Otp, err error) {
 }
 
 func ModifyOtpKey(incomingOtp models.Otp) (otp *models.Otp, err error) {
-	otpCollection := database.MI.DB.Collection("otps")
+	otpCollection := database.MI.DB.Collection(models.OtpCollectionName)
 	otp, err = GetOtpByPhone(incomingOtp.Phone)
 	if err != nil {
 		return
@@ -67,7 +67,7 @@ func ModifyOtpKey(incomingOtp models.Otp) (otp *models.Otp, err error) {
 }
 
 func DeleteOtp(phone *string) (err error) {
-	otpCollection := database.MI.DB.Collection("otps")
+	otpCollection := database.MI.DB.Collection(models.OtpCollectionName)
 	query := bson.M{"phone": phone}
 	result := otpCollection.FindOneAndDelete(context.Background(), query)
 	err = result.Err()

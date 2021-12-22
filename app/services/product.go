@@ -14,7 +14,7 @@ import (
 )
 
 func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, error) {
-	productCollection := database.MI.DB.Collection("products")
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 
 	var products []models.Product = make([]models.Product, 0)
 	query := bson.D{{}}
@@ -44,7 +44,7 @@ func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, erro
 }
 
 func CreateProduct(body models.Product) (*models.Product, error) {
-	productCollection := database.MI.DB.Collection("products")
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 
 	body.ID = nil
 	body.CreatedAt = time.Now()
@@ -64,7 +64,7 @@ func CreateProduct(body models.Product) (*models.Product, error) {
 }
 
 func GetProduct(id primitive.ObjectID) (*models.Product, error) {
-	productCollection := database.MI.DB.Collection("products")
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 	product := &models.Product{}
 
 	query := bson.D{{Key: "_id", Value: id}}
@@ -74,7 +74,7 @@ func GetProduct(id primitive.ObjectID) (*models.Product, error) {
 }
 
 func UpdateProduct(id primitive.ObjectID, data *models.Product) (*models.Product, error) {
-	productCollection := database.MI.DB.Collection("products")
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 
 	query := bson.D{{Key: "_id", Value: id}}
 
@@ -129,7 +129,7 @@ func UpdateProduct(id primitive.ObjectID, data *models.Product) (*models.Product
 }
 
 func DeleteProduct(c *fiber.Ctx) error {
-	productCollection := database.MI.DB.Collection("products")
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 
 	paramID := c.Params("id")
 

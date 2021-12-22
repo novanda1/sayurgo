@@ -7,6 +7,8 @@ import (
 	sharedTypes "github.com/novanda1/sayurgo/pkg/shared-types"
 )
 
+var UserCollectionName = "users"
+
 type UserRole string
 
 var (
