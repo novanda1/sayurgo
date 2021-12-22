@@ -22,7 +22,7 @@ func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, erro
 	cursor, err := productCollection.Find(
 		context.TODO(),
 		query,
-		options.Find().SetLimit(2),
+		options.Find().SetLimit(opts.Limit),
 		options.Find().SetSkip((opts.Page-1)*opts.Limit),
 	)
 

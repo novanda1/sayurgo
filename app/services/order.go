@@ -44,7 +44,7 @@ func GetAllOrders(opts models.GetAllOrdersParams) (orders []models.Order, hasNex
 	cursor, err := orderCollection.Find(
 		context.TODO(),
 		query,
-		options.Find().SetLimit(2),
+		options.Find().SetLimit(opts.Limit),
 		options.Find().SetSkip((opts.Page-1)*opts.Limit),
 	)
 
