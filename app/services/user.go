@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/novanda1/sayurgo/app/models"
+	"github.com/novanda1/sayurgo/pkg/utils"
 	"github.com/novanda1/sayurgo/platform/database"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -90,30 +91,17 @@ func UpdateUser(c *fiber.Ctx) (*models.User, error) {
 		return data, err
 	}
 
+	var userDataToUpdate bson.D
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "displayName", data.DisplayName)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "phone", data.Phone)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "userAddress", data.UserAddress)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "updatedAt", time.Now())
+
 	query := bson.D{{Key: "_id", Value: id}}
-
-	// store the data that need to update
-	var dataToUpdate bson.D
-
-	if data.DisplayName != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "displayName", Value: data.DisplayName})
-	}
-
-	if data.Phone != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "phone", Value: data.Phone})
-	}
-
-	if data.UserAddress != nil {
-		dataToUpdate = append(dataToUpdate, bson.E{Key: "userAddress", Value: data.UserAddress})
-	}
-
-	dataToUpdate = append(dataToUpdate, bson.E{Key: "updatedAt", Value: time.Now()})
-
 	update := bson.D{
-		{Key: "$set", Value: dataToUpdate},
+		{Key: "$set", Value: userDataToUpdate},
 	}
 
-	// update
 	err = userCollection.FindOneAndUpdate(c.Context(), query, update).Err()
 	if err != nil {
 		return data, err
