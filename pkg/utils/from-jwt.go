@@ -13,12 +13,12 @@ func GetPhoneFromJWT(c *fiber.Ctx) (phone string) {
 	return phone
 }
 
-func GetUseridFromJWT(c *fiber.Ctx) (phone string) {
+func GetUseridFromJWT(c *fiber.Ctx) (userid string) {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	phone = claims["id"].(string)
+	userid = claims["id"].(string)
 
-	return phone
+	return userid
 }
 
 func AmIAdmin(c *fiber.Ctx) (isAdmin bool) {
