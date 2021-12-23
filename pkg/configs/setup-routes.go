@@ -23,6 +23,7 @@ func SetupRoutes(app *fiber.App) {
 	routes.ProductRoute(api.Group("/products"))
 	routes.CartRoute(api.Group("/carts"))
 	routes.OrderRoute(api.Group("/order"))
+	routes.UserRoute(api.Group("/user"))
 }
 
 func SetupAdminRoutes(app *fiber.App) {

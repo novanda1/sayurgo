@@ -49,18 +49,12 @@ func CreateUser(data models.User) (*models.User, error) {
 	return user, err
 }
 
-func GetUser(c *fiber.Ctx, paramId string) (*models.User, error) {
+func GetUser(userid primitive.ObjectID) (*models.User, error) {
 	userCollection := database.MI.DB.Collection(models.UserCollectionName)
 	user := &models.User{}
 
-	id, err := primitive.ObjectIDFromHex(paramId)
-
-	if err != nil {
-		return user, err
-	}
-
-	query := bson.D{{Key: "_id", Value: id}}
-	err = userCollection.FindOne(c.Context(), query).Decode(user)
+	query := bson.D{{Key: "_id", Value: userid}}
+	err := userCollection.FindOne(context.Background(), query).Decode(user)
 
 	return user, err
 }
@@ -75,39 +69,25 @@ func GetUserByPhone(phone string) (*models.User, error) {
 	return user, err
 }
 
-func UpdateUser(c *fiber.Ctx) (*models.User, error) {
+func UpdateUser(userid primitive.ObjectID, newUserData *models.User) (*models.User, error) {
 	userCollection := database.MI.DB.Collection(models.UserCollectionName)
-	data := new(models.User)
-
-	paramId := c.Params("id")
-
-	id, err := primitive.ObjectIDFromHex(paramId)
-	if err != nil {
-		return data, err
-	}
-
-	err = c.BodyParser(&data)
-	if err != nil {
-		return data, err
-	}
 
 	var userDataToUpdate bson.D
-	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "displayName", data.DisplayName)
-	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "phone", data.Phone)
-	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "userAddress", data.UserAddress)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "displayName", newUserData.DisplayName)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "phone", newUserData.Phone)
+	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "userAddress", newUserData.UserAddress)
 	userDataToUpdate = utils.AppendOrSkip(userDataToUpdate, "updatedAt", time.Now())
 
-	query := bson.D{{Key: "_id", Value: id}}
+	query := bson.D{{Key: "_id", Value: userid}}
 	update := bson.D{
 		{Key: "$set", Value: userDataToUpdate},
 	}
 
-	err = userCollection.FindOneAndUpdate(c.Context(), query, update).Err()
+	err := userCollection.FindOneAndUpdate(context.Background(), query, update).Err()
 	if err != nil {
-		return data, err
+		return newUserData, err
 	}
 
-	user, _ := GetUser(c, paramId)
+	user, _ := GetUser(userid)
 	return user, err
-
 }
