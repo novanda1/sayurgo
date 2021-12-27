@@ -83,6 +83,22 @@ definitions:
     - productID
     - totalProduct
     type: object
+  models.OrderResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.OrderResponseData'
+      success:
+        type: boolean
+    type: object
+  models.OrderResponseData:
+    properties:
+      hasNext:
+        type: boolean
+      orders:
+        items:
+          $ref: '#/definitions/models.Order'
+        type: array
+    type: object
   models.Product:
     properties:
       categories:
@@ -183,6 +199,22 @@ info:
   version: 0.0.1
 paths:
   /admin/order/:
+    get:
+      consumes:
+      - application/json
+      description: Get all order of users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.OrderResponse'
+            type: array
+      summary: 'Admin: Get Orders of all user'
+      tags:
+      - Order
     put:
       consumes:
       - application/json

@@ -17,6 +17,30 @@
     "host": "localhost:3000",
     "paths": {
         "/admin/order/": {
+            "get": {
+                "description": "Get all order of users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Admin: Get Orders of all user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.OrderResponse"
+                            }
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Admin-Only: Change OrderStatus on User-Order",
                 "consumes": [
@@ -651,6 +675,31 @@
                 },
                 "totalProduct": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.OrderResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.OrderResponseData"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.OrderResponseData": {
+            "type": "object",
+            "properties": {
+                "hasNext": {
+                    "type": "boolean"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Order"
+                    }
                 }
             }
         },

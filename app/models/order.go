@@ -58,6 +58,16 @@ type Order struct {
 	UpdatedAt  time.Time          `json:"updatedAt,omitempty"`
 }
 
+type OrderResponseData struct {
+	HasNext bool     `json:"hasNext"`
+	Orders  []*Order `json:"orders"`
+}
+
+type OrderResponse struct {
+	Success bool              `json:"success"`
+	Data    OrderResponseData `json:"data"`
+}
+
 func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()

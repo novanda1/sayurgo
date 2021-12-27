@@ -62,13 +62,13 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 }
 
 // Get all of order
-// @Description Get all of order
-// @Summary Get Order
+// @Description Get all order of users
+// @Summary Admin: Get Orders of all user
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Order
-// @Router /api/order/ [get]
+// @Success 200 {array} models.OrderResponse
+// @Router /admin/order/ [get]
 func GetOrders(c *fiber.Ctx) error {
 	if !utils.AmIAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
