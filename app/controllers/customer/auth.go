@@ -36,7 +36,7 @@ func Auth(c *fiber.Ctx) error {
 	err := c.BodyParser(&body)
 
 	if err != nil {
-		c.JSON(fiber.Map{
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "failed to parse body",
 		})
@@ -54,7 +54,7 @@ func Auth(c *fiber.Ctx) error {
 	}
 
 	whatsapp.SendOtpCodeToWhatsapp(*otp.Phone, *otp.Otp)
-	return c.JSON(fiber.Map{"success": true})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true})
 }
 
 // Auth func verif Authorization that return JWT token.
@@ -71,14 +71,14 @@ func AuthVerif(c *fiber.Ctx) error {
 	err := c.BodyParser(&body)
 
 	if err != nil {
-		c.JSON(fiber.Map{
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "failed to parse body",
 		})
 	}
 
 	result, err := services.AuthVerification(body.Phone, body.Otp)
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": result.Verified,
 		"user":    result.User,
 		"token":   result.Token,

@@ -79,7 +79,7 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 	paramID := c.Params("id")
 	id, err := primitive.ObjectIDFromHex(paramID)
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "wrong param id",
 		})
@@ -88,7 +88,7 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 	body := new(models.Product)
 	err = c.BodyParser(&body)
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "failed to parse body",
 		})
@@ -99,13 +99,13 @@ func AdminUpdateProduct(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "Product Not found",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
 	product, err := services.UpdateProduct(id, body)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})

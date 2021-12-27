@@ -26,7 +26,7 @@ func GetProducts(c *fiber.Ctx) error {
 	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
 	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Something went wrong",
 			"error":   err.Error(),
@@ -37,7 +37,7 @@ func GetProducts(c *fiber.Ctx) error {
 	options.Page = page
 	errors := options.Validate(*options)
 	if errors != nil {
-		return c.JSON(errors)
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
 	}
 
 	products, hasNext, err := services.AllProducts(*options)
@@ -69,9 +69,7 @@ func GetProducts(c *fiber.Ctx) error {
 // @Router /api/products/{id} [get]
 func GetProduct(c *fiber.Ctx) error {
 	paramId := c.Params("id")
-
 	id, err := primitive.ObjectIDFromHex(paramId)
-
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": "false",

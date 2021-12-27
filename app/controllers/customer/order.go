@@ -14,7 +14,7 @@ import (
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.Order
+// @Success 201 {object} models.Order
 // @Param order body models.Order true "Order"
 // @Router /api/order/ [post]
 func CreateOrder(c *fiber.Ctx) error {
@@ -27,9 +27,8 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	phone := utils.GetPhoneFromJWT(c)
-	user, err := services.GetUserByPhone(phone)
-	userID, _ := primitive.ObjectIDFromHex(*user.ID)
+	userIdContext := utils.GetUseridFromJWT(c)
+	userID, _ := primitive.ObjectIDFromHex(userIdContext)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -42,7 +41,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -55,9 +54,9 @@ func CreateOrder(c *fiber.Ctx) error {
 
 	order, err := services.CreateOrder(body, userID)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 

@@ -29,7 +29,7 @@ func UpdateMyProfile(c *fiber.Ctx) error {
 	userid := utils.GetUseridFromJWT(c)
 	primitiveUserid, err := primitive.ObjectIDFromHex(userid)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success": false,
 			"message": "try to relogin",
 			"error":   err.Error(),
@@ -38,14 +38,14 @@ func UpdateMyProfile(c *fiber.Ctx) error {
 
 	updatedUser, err := services.UpdateUser(primitiveUserid, body)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": "failed to update",
 			"error":   err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "updated successfully",
 		"user":    updatedUser,

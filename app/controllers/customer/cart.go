@@ -54,16 +54,8 @@ func CreateCart(c *fiber.Ctx) error {
 // @Success 200 {array} models.Cart
 // @Router /api/carts [get]
 func GetCart(c *fiber.Ctx) error {
-	phone := utils.GetPhoneFromJWT(c)
-	user, err := services.GetUserByPhone(phone)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"error":   err.Error(),
-		})
-	}
-
-	userID, _ := primitive.ObjectIDFromHex(*user.ID)
+	useridContext := utils.GetUseridFromJWT(c)
+	userID, _ := primitive.ObjectIDFromHex(useridContext)
 	cart, err := services.GetCart(userID)
 
 	if err != nil {
@@ -88,7 +80,7 @@ func GetCart(c *fiber.Ctx) error {
 // @Tags Cart
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Cart
+// @Success 201 {array} models.Cart
 // @Param productid path string true "Product ID"
 // @Param body body models.CartProduct true "Product ID"
 // @Router /api/carts/{productid} [post]
@@ -119,31 +111,22 @@ func AddProductToCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "Product Not found",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
-	phone := utils.GetPhoneFromJWT(c)
-	user, err := services.GetUserByPhone(phone)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "user not found", // not authenticated
-			"error":   err,
-		})
-	}
-
-	userID, _ := primitive.ObjectIDFromHex(*user.ID)
+	userIdContext := utils.GetUseridFromJWT(c)
+	userID, _ := primitive.ObjectIDFromHex(userIdContext)
 	isExist := services.IsProductAlreadyExists(productID, userID)
 	if isExist {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "product already exist in your cart",
 		})
 	}
 
 	cart, msg := services.AddProductToCart(userID, cartProduct)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
 		"message": msg,
 		"data": fiber.Map{
@@ -171,19 +154,10 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 		})
 	}
 
-	phone := utils.GetPhoneFromJWT(c)
-	user, err := services.GetUserByPhone(phone)
+	userIdContext := utils.GetUseridFromJWT(c)
+	userID, err := primitive.ObjectIDFromHex(userIdContext)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "user not found", // not authenticated
-			"error":   err,
-		})
-	}
-
-	userID, err := primitive.ObjectIDFromHex(*user.ID)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})
@@ -194,16 +168,15 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "cart Not found",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
 	message, success := services.DeleteProductFromCart(productID, userID)
 
-	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": success,
 		"message": message,
-		"error":   err,
 	})
 }
 
@@ -221,23 +194,16 @@ func ChangeTotalProductInCart(c *fiber.Ctx) error {
 	paramId := c.Params("productid")
 	productID, err := primitive.ObjectIDFromHex(paramId)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})
 	}
-	phone := utils.GetPhoneFromJWT(c)
-	user, err := services.GetUserByPhone(phone)
+
+	userIdContext := utils.GetUseridFromJWT(c)
+	userID, err := primitive.ObjectIDFromHex(userIdContext)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "user not found", // not authenticated
-			"error":   err,
-		})
-	}
-	userID, err := primitive.ObjectIDFromHex(*user.ID)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})
@@ -248,7 +214,6 @@ func ChangeTotalProductInCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "cart Not found",
-			"error":   err,
 		})
 	}
 
@@ -257,7 +222,7 @@ func ChangeTotalProductInCart(c *fiber.Ctx) error {
 
 	message, success, data := services.ChangeTotalProductInCart(productID, userID, *cartProduct.TotalProduct)
 
-	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": success,
 		"message": message,
 		"data":    data,
