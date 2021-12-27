@@ -11,8 +11,9 @@ import (
 var OrderCollectionName = "orders"
 
 type GetAllOrdersParams struct {
-	Limit int64 `json:"limit" validate:"required,numeric"`
-	Page  int64 `json:"page" validate:"required,numeric"`
+	Limit       int64       `json:"limit" validate:"required,numeric"`
+	Page        int64       `json:"page" validate:"required,numeric"`
+	OrderStatus OrderStatus `json:"orderStatus"`
 }
 
 type OrderStatus string
@@ -83,5 +84,22 @@ func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
 		}
 	}
 
+	return errors
+}
+
+func (c GetAllOrdersParams) Validate(params GetAllOrdersParams) []*sharedTypes.ErrorResponse {
+	var errors []*sharedTypes.ErrorResponse
+	validate := validator.New()
+
+	err := validate.Struct(params)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element sharedTypes.ErrorResponse
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, &element)
+		}
+	}
 	return errors
 }

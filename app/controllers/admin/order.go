@@ -77,7 +77,7 @@ func GetOrders(c *fiber.Ctx) error {
 		})
 	}
 
-	options := new(models.GetAllProductsParams)
+	status := c.Query("status")
 	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
 	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
@@ -88,8 +88,15 @@ func GetOrders(c *fiber.Ctx) error {
 		})
 	}
 
+	options := new(models.GetAllOrdersParams)
+
 	options.Limit = limit
 	options.Page = page
+
+	if status != "" {
+		options.OrderStatus = models.OrderStatus(status)
+	}
+
 	errors := options.Validate(*options)
 	if errors != nil {
 		return c.JSON(errors)

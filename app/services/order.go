@@ -39,11 +39,15 @@ func GetAllOrders(opts models.GetAllOrdersParams) (orders []models.Order, hasNex
 	orderCollection := database.MI.DB.Collection(models.OrderCollectionName)
 
 	orders = make([]models.Order, 0)
-	query := bson.D{{}}
+	filter := bson.D{}
+
+	if opts.OrderStatus != "" {
+		filter = append(filter, bson.E{Key: "orderStatus", Value: opts.OrderStatus.String()})
+	}
 
 	cursor, err := orderCollection.Find(
 		context.TODO(),
-		query,
+		filter,
 		options.Find().SetLimit(opts.Limit),
 		options.Find().SetSkip((opts.Page-1)*opts.Limit),
 	)
