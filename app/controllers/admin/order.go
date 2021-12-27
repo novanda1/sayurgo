@@ -30,7 +30,7 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 	body := new(models.Order)
 	err := c.BodyParser(body)
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})
@@ -39,7 +39,7 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 	paramID := c.Params("id")
 	orderID, err := primitive.ObjectIDFromHex(paramID)
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})
@@ -47,7 +47,7 @@ func ChangeOrderStatus(c *fiber.Ctx) error {
 
 	order, err := services.ChangeOrderStatus(orderID, models.OrderStatus(body.Status))
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err.Error(),
 		})

@@ -81,7 +81,7 @@ func GetMyOrders(c *fiber.Ctx) error {
 	useridString := utils.GetUseridFromJWT(c)
 	userID, err := primitive.ObjectIDFromHex(useridString)
 	if err != nil {
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "failed to parse body",
 		})
@@ -89,13 +89,13 @@ func GetMyOrders(c *fiber.Ctx) error {
 
 	order, err := services.GetOrdersByUserID(userID)
 	if err != nil {
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    order,
 	})
