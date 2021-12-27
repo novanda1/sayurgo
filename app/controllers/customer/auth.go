@@ -12,11 +12,11 @@ type verifOtpParams struct {
 	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
-type requestOtpParams struct {
+type RequestOtpParams struct {
 	Phone *string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
-type verifOtpResponse struct {
+type VerifOtpResponse struct {
 	Success *bool        `json:"success"`
 	User    *models.User `json:"user"`
 	Token   *string      `json:"token"`

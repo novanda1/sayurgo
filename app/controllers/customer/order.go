@@ -18,13 +18,18 @@ import (
 // @Param order body models.Order true "Order"
 // @Router /api/order/ [post]
 func CreateOrder(c *fiber.Ctx) error {
-	body := &models.Order{}
+	body := &models.CreateOrderBody{}
 	err := c.BodyParser(body)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})
+	}
+
+	errors := body.Validate(*body)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
 	}
 
 	userIdContext := utils.GetUseridFromJWT(c)
@@ -36,8 +41,15 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	hasProducts, err := services.IsHasProductOnCart(userID)
+	addressId, err := primitive.ObjectIDFromHex(*body.AddressID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   err,
+		})
+	}
 
+	hasProducts, err := services.IsHasProductOnCart(userID)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -52,7 +64,9 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	order, err := services.CreateOrder(body, userID)
+	createOrderParams := new(models.Order)
+	createOrderParams.AddressID = addressId
+	order, err := services.CreateOrder(createOrderParams, userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,

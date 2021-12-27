@@ -32,7 +32,7 @@ type UserAddress struct {
 	City       *string   `json:"city,omitempty"`
 	PostalCode *string   `json:"postalCode,omitempty"`
 	Address    *string   `json:"address,omitempty"`
-	Detail     *string   `json:"detai,omitemptyl"`
+	Detail     *string   `json:"detai,omitempty"`
 	CreatedAt  time.Time `json:"createdAt,omitempty"`
 	UpdatedAt  time.Time `json:"updatedAt,omitempty"`
 }

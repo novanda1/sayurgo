@@ -52,6 +52,7 @@ type OrderProduct struct {
 type Order struct {
 	ID         *string            `json:"id,omitempty" bson:"_id,omitempty"`
 	UserID     primitive.ObjectID `json:"userid,omitempty" bson:"userid,omitempty"`
+	AddressID  primitive.ObjectID `json:"addressId,omitempty" bson:"addressId,omitempty"`
 	Products   *[]OrderProduct    `json:"products,omitempty" bson:"products,omitempty"`
 	TotalPrice *int               `json:"totalPrice,omitempty" bson:"totalPrice,omitempty"`
 	Status     string             `json:"orderStatus,omitempty" bson:"orderStatus,omitempty"`
@@ -67,6 +68,10 @@ type OrderResponseData struct {
 type OrderResponse struct {
 	Success bool              `json:"success"`
 	Data    OrderResponseData `json:"data"`
+}
+
+type CreateOrderBody struct {
+	AddressID *string `json:"addressid" validate:"required"`
 }
 
 func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
@@ -88,6 +93,23 @@ func (c Order) Validate(order Order) []*sharedTypes.ErrorResponse {
 }
 
 func (c GetAllOrdersParams) Validate(params GetAllOrdersParams) []*sharedTypes.ErrorResponse {
+	var errors []*sharedTypes.ErrorResponse
+	validate := validator.New()
+
+	err := validate.Struct(params)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element sharedTypes.ErrorResponse
+			element.FailedField = err.StructNamespace()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errors = append(errors, &element)
+		}
+	}
+	return errors
+}
+
+func (c CreateOrderBody) Validate(params CreateOrderBody) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()
 
