@@ -167,74 +167,6 @@ var doc = `{
                 ]
             }
         },
-        "/api/auth/login": {
-            "post": {
-                "description": "Request Authorization that return OTP code.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Request OTP code",
-                "parameters": [
-                    {
-                        "description": "Your Phone Number",
-                        "name": "phone",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.requestOtpParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpParams"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/auth/verif": {
-            "post": {
-                "description": "Verify OTP code.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Verify OTP code and get JWT code",
-                "parameters": [
-                    {
-                        "description": "Your Phone Number",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/carts": {
             "get": {
                 "description": "Get cart data for specific user",
@@ -538,6 +470,74 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/auth/request": {
+            "post": {
+                "description": "Request Authorization that return OTP code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request OTP code",
+                "parameters": [
+                    {
+                        "description": "Your Phone Number",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.requestOtpParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpParams"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verify": {
+            "post": {
+                "description": "Verify OTP code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify OTP code and get JWT code",
+                "parameters": [
+                    {
+                        "description": "Your Phone Number",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.verifOtpResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -746,6 +746,9 @@ var doc = `{
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 },
                 "updatedAt": {

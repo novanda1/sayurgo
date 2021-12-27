@@ -135,6 +135,8 @@ definitions:
         type: string
       phone:
         type: string
+      role:
+        type: string
       updatedAt:
         type: string
       userAddress:
@@ -268,50 +270,6 @@ paths:
       summary: 'Admin: Update Product'
       tags:
       - Product
-  /api/auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Request Authorization that return OTP code.
-      parameters:
-      - description: Your Phone Number
-        in: body
-        name: phone
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.requestOtpParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.verifOtpParams'
-      summary: Request OTP code
-      tags:
-      - Auth
-  /api/auth/verif:
-    post:
-      consumes:
-      - application/json
-      description: Verify OTP code.
-      parameters:
-      - description: Your Phone Number
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.verifOtpParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.verifOtpResponse'
-      summary: Verify OTP code and get JWT code
-      tags:
-      - Auth
   /api/carts:
     get:
       consumes:
@@ -513,6 +471,50 @@ paths:
       summary: Get Product
       tags:
       - Product
+  /auth/request:
+    post:
+      consumes:
+      - application/json
+      description: Request Authorization that return OTP code.
+      parameters:
+      - description: Your Phone Number
+        in: body
+        name: phone
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestOtpParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.verifOtpParams'
+      summary: Request OTP code
+      tags:
+      - Auth
+  /auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify OTP code.
+      parameters:
+      - description: Your Phone Number
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.verifOtpParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.verifOtpResponse'
+      summary: Verify OTP code and get JWT code
+      tags:
+      - Auth
 securityDefinitions:
   ApiKeyAuth:
     in: header
