@@ -10,8 +10,7 @@ import (
 )
 
 func SaveOtp(body models.Otp) (otp *models.Otp, err error) {
-	otp, err = GetOtpByPhone(body.Phone)
-
+	_, err = GetOtpByPhone(body.Phone)
 	if err != nil {
 		body.Exp = time.Now().Add(2 * time.Minute)
 		otp, err = CreateOtp(body)

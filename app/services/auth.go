@@ -34,6 +34,10 @@ func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResu
 			userData := new(models.User)
 			userData.Phone = phone
 			user, err = CreateUser(*userData)
+			if err != nil {
+				return result, err
+			}
+
 			token, _ := SignToken(user)
 
 			result.User = user
@@ -45,6 +49,10 @@ func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResu
 		}
 
 		token, err := SignToken(user)
+		if err != nil {
+			return result, err
+		}
+
 		result.User = user
 		result.Token = &token
 
