@@ -7,4 +7,5 @@ import (
 
 func UserRoute(route fiber.Router) {
 	route.Put("", controllers.UpdateMyProfile)
+	route.Post("/address", controllers.AddMyAddress)
 }
