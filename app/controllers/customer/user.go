@@ -51,3 +51,40 @@ func UpdateMyProfile(c *fiber.Ctx) error {
 		"user":    updatedUser,
 	})
 }
+
+func AddMyAddress(c *fiber.Ctx) error {
+	body := &models.UserAddress{}
+	err := c.BodyParser(body)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "wrong body",
+			"error":   err.Error(),
+		})
+	}
+
+	userid := utils.GetUseridFromJWT(c)
+	primitiveUserid, err := primitive.ObjectIDFromHex(userid)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"success": false,
+			"message": "try to relogin",
+			"error":   err.Error(),
+		})
+	}
+
+	updatedUser, err := services.AddUserAddress(primitiveUserid, *body)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "failed to update",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "updated successfully",
+		"user":    updatedUser,
+	})
+}
