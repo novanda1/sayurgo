@@ -40,4 +40,5 @@ func ConnectDB() {
 	}
 
 	CreateMongoIndex(models.UserCollectionName, "phone", true)
+	CreateMongoIndex(models.CartCollectionName, "userid", true)
 }
