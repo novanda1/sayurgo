@@ -18,13 +18,21 @@ func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, erro
 	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
 
 	var products []models.Product = make([]models.Product, 0)
-	query := bson.D{{}}
+	query := bson.M{}
+
+	if *opts.LastId != "" {
+		lastid, err := primitive.ObjectIDFromHex(*opts.LastId)
+		if err != nil { // the given id is didnt valid
+			return products, false, err
+		}
+
+		query = bson.M{"_id": bson.M{"$gt": lastid}}
+	}
 
 	cursor, err := productCollection.Find(
 		context.TODO(),
 		query,
 		options.Find().SetLimit(opts.Limit),
-		options.Find().SetSkip((opts.Page-1)*opts.Limit),
 	)
 
 	if err != nil {
@@ -33,13 +41,7 @@ func AllProducts(opts models.GetAllProductsParams) ([]models.Product, bool, erro
 
 	cursor.All(context.TODO(), &products)
 	cursor.Close(context.Background())
-	remain := cursor.RemainingBatchLength()
-	var hasNext bool = true
-
-	hasNext = true
-	if remain <= 1 {
-		hasNext = false
-	}
+	var hasNext bool = IsLastProductPage(products)
 
 	return products, hasNext, err
 }
@@ -125,4 +127,24 @@ func DeleteProduct(c *fiber.Ctx) error {
 	err = productCollection.FindOneAndDelete(c.Context(), query).Err()
 
 	return err
+}
+
+func GetLastProductID() (id string) {
+	productCollection := database.MI.DB.Collection(models.ProductCollectionName)
+
+	var products []models.Product = make([]models.Product, 0)
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+
+	cursor, _ := productCollection.Find(context.Background(), bson.M{}, findOptions)
+	cursor.All(context.Background(), &products)
+
+	id = *products[0].ID
+	return
+}
+
+func IsLastProductPage(products []models.Product) bool {
+	endId := GetLastProductID()
+	currentProductLastID := products[len(products)-1].ID
+	return endId != *currentProductLastID
 }

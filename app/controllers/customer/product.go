@@ -17,14 +17,14 @@ import (
 // @Accept json
 // @Produce json
 // @Param limit query int64 true "Limit"
-// @Param page query int64 true "Page"
+// @Param lastid query string false "LastId"
 // @Success 200 {array} models.GetAllProductsResponse
 // @Router /api/products [get]
 func GetProducts(c *fiber.Ctx) error {
 	options := new(models.GetAllProductsParams)
 
+	page := c.Query("lastid")
 	limit, err := strconv.ParseInt(c.Query("limit"), 10, 64)
-	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -34,7 +34,7 @@ func GetProducts(c *fiber.Ctx) error {
 	}
 
 	options.Limit = limit
-	options.Page = page
+	options.LastId = &page
 	errors := options.Validate(*options)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errors)

@@ -24,8 +24,8 @@ type Product struct {
 }
 
 type GetAllProductsParams struct {
-	Limit int64 `json:"limit" validate:"required,numeric"`
-	Page  int64 `json:"page" validate:"required,numeric"`
+	Limit  int64   `json:"limit" validate:"required,numeric"`
+	LastId *string `json:"lastId"`
 }
 
 type GetAllProductsResponse struct {

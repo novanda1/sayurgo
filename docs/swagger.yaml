@@ -1,17 +1,10 @@
 definitions:
-  controllers.requestOtpParams:
+  controllers.RequestOtpParams:
     properties:
       phone:
         type: string
     type: object
-  controllers.verifOtpParams:
-    properties:
-      otp:
-        type: string
-      phone:
-        type: string
-    type: object
-  controllers.verifOtpResponse:
+  controllers.VerifOtpResponse:
     properties:
       success:
         type: boolean
@@ -19,6 +12,13 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/models.User'
+    type: object
+  controllers.verifOtpParams:
+    properties:
+      otp:
+        type: string
+      phone:
+        type: string
     type: object
   models.Cart:
     properties:
@@ -51,8 +51,26 @@ definitions:
     - productID
     - totalProduct
     type: object
+  models.GetAllProductsResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.GetAllProductsResponseData'
+      success:
+        type: boolean
+    type: object
+  models.GetAllProductsResponseData:
+    properties:
+      hasNext:
+        type: boolean
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+    type: object
   models.Order:
     properties:
+      addressId:
+        type: string
       createdAt:
         type: string
       id:
@@ -168,8 +186,6 @@ definitions:
         type: string
       city:
         type: string
-      createdAt:
-        type: string
       detai:
         type: string
       id:
@@ -182,8 +198,13 @@ definitions:
         type: string
       title:
         type: string
-      updatedAt:
-        type: string
+    required:
+    - address
+    - city
+    - phone
+    - postalCode
+    - recipient
+    - title
     type: object
 host: localhost:3000
 info:
@@ -377,8 +398,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             items:
               $ref: '#/definitions/models.Cart'
@@ -445,8 +466,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.Order'
       summary: Create Order
@@ -463,11 +484,10 @@ paths:
         name: limit
         required: true
         type: integer
-      - description: Page
+      - description: LastId
         in: query
-        name: page
-        required: true
-        type: integer
+        name: lastid
+        type: string
       produces:
       - application/json
       responses:
@@ -475,7 +495,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Product'
+              $ref: '#/definitions/models.GetAllProductsResponse'
             type: array
       summary: Get All Products
       tags:
@@ -514,7 +534,7 @@ paths:
         name: phone
         required: true
         schema:
-          $ref: '#/definitions/controllers.requestOtpParams'
+          $ref: '#/definitions/controllers.RequestOtpParams'
       produces:
       - application/json
       responses:
@@ -543,7 +563,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.verifOtpResponse'
+            $ref: '#/definitions/controllers.VerifOtpResponse'
       summary: Verify OTP code and get JWT code
       tags:
       - Auth

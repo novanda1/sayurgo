@@ -315,8 +315,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -409,8 +409,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.Order"
                         }
@@ -440,11 +440,10 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "description": "LastId",
+                        "name": "lastid",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -453,7 +452,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Product"
+                                "$ref": "#/definitions/models.GetAllProductsResponse"
                             }
                         }
                     }
@@ -515,7 +514,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.requestOtpParams"
+                            "$ref": "#/definitions/controllers.RequestOtpParams"
                         }
                     }
                 ],
@@ -557,7 +556,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.verifOtpResponse"
+                            "$ref": "#/definitions/controllers.VerifOtpResponse"
                         }
                     }
                 }
@@ -565,11 +564,25 @@ var doc = `{
         }
     },
     "definitions": {
-        "controllers.requestOtpParams": {
+        "controllers.RequestOtpParams": {
             "type": "object",
             "properties": {
                 "phone": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.VerifOtpResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
                 }
             }
         },
@@ -581,20 +594,6 @@ var doc = `{
                 },
                 "phone": {
                     "type": "string"
-                }
-            }
-        },
-        "controllers.verifOtpResponse": {
-            "type": "object",
-            "properties": {
-                "success": {
-                    "type": "boolean"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
                 }
             }
         },
@@ -645,9 +644,37 @@ var doc = `{
                 }
             }
         },
+        "models.GetAllProductsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.GetAllProductsResponseData"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.GetAllProductsResponseData": {
+            "type": "object",
+            "properties": {
+                "hasNext": {
+                    "type": "boolean"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Product"
+                    }
+                }
+            }
+        },
         "models.Order": {
             "type": "object",
             "properties": {
+                "addressId": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -813,14 +840,19 @@ var doc = `{
         },
         "models.UserAddress": {
             "type": "object",
+            "required": [
+                "address",
+                "city",
+                "phone",
+                "postalCode",
+                "recipient",
+                "title"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
                 },
                 "city": {
-                    "type": "string"
-                },
-                "createdAt": {
                     "type": "string"
                 },
                 "detai": {
@@ -839,9 +871,6 @@ var doc = `{
                     "type": "string"
                 },
                 "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }
