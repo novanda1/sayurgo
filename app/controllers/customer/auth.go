@@ -28,7 +28,7 @@ type VerifOtpResponse struct {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param phone body requestOtpParams true "Your Phone Number"
+// @Param phone body RequestOtpParams true "Your Phone Number"
 // @Success 200 {object} verifOtpParams
 // @Router /auth/request [post]
 func Auth(c *fiber.Ctx) error {
@@ -64,7 +64,7 @@ func Auth(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param body body verifOtpParams true "Your Phone Number"
-// @Success 200 {object} verifOtpResponse
+// @Success 200 {object} VerifOtpResponse
 // @Router /auth/verify [post]
 func AuthVerif(c *fiber.Ctx) error {
 	body := new(verifOtpParams)
