@@ -28,6 +28,16 @@ type GetAllProductsParams struct {
 	Page  int64 `json:"page" validate:"required,numeric"`
 }
 
+type GetAllProductsResponse struct {
+	Success bool                       `json:"success"`
+	Data    GetAllProductsResponseData `json:"data"`
+}
+
+type GetAllProductsResponseData struct {
+	HasNext  bool      `json:"hasNext"`
+	Products []Product `json:"products"`
+}
+
 func (c Product) Validate(product Product) []*sharedTypes.ErrorResponse {
 	var errors []*sharedTypes.ErrorResponse
 	validate := validator.New()
