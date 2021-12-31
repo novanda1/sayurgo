@@ -42,6 +42,7 @@ func main() {
 
 	database.ConnectDB()
 
+	config.WithCache(app)
 	config.WithSwagger(app)
 	config.SetupAdminRoutes(app)
 	config.SetupRoutes(app)
