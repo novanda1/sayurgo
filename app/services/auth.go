@@ -24,9 +24,10 @@ func Auth(body *models.Otp) (otp *models.Otp, err error) {
 	return
 }
 
-func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResult, fail error) {
+func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResult, isCreateNewUser bool, fail error) {
 	verified := VerifyOtp(*phone, *otpkey)
 	result.Verified = &verified
+	isCreateNewUser = false
 
 	if verified {
 		user, err := GetUserByPhone(*phone)
@@ -35,13 +36,14 @@ func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResu
 			userData.Phone = phone
 			user, err = CreateUser(*userData)
 			if err != nil {
-				return result, err
+				return result, isCreateNewUser, err
 			}
 
 			token, _ := SignToken(user)
 
 			result.User = user
 			result.Token = &token
+			isCreateNewUser = true
 
 			err = nil
 
@@ -50,7 +52,7 @@ func AuthVerification(phone *string, otpkey *string) (result models.VerifOtpResu
 
 		token, err := SignToken(user)
 		if err != nil {
-			return result, err
+			return result, isCreateNewUser, err
 		}
 
 		result.User = user

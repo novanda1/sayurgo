@@ -77,8 +77,18 @@ func AuthVerif(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := services.AuthVerification(body.Phone, body.Otp)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	result, isCreateNewUser, err := services.AuthVerification(body.Phone, body.Otp)
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+	}
+
+	var status int = fiber.StatusOK
+
+	if isCreateNewUser {
+		status = fiber.StatusCreated
+	}
+
+	return c.Status(status).JSON(fiber.Map{
 		"success": result.Verified,
 		"user":    result.User,
 		"token":   result.Token,
