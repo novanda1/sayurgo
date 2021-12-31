@@ -174,7 +174,7 @@ func DeleteProductFromCart(c *fiber.Ctx) error {
 
 	message, success := services.DeleteProductFromCart(productID, userID)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
 		"success": success,
 		"message": message,
 	})
